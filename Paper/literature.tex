@@ -256,6 +256,21 @@ which allows for the lagrangian to be:
 \mathcal{L}(q)=T(q)-V(q)
 \]
 
+yielding,
+
+\[
+\mathcal{L}(q) = \frac{1}{2} m \dot{q}_{1}^{2} + \frac{1}{2} m \dot{q}_{2}^{2} + \frac{1}{2} m \dot{q}_{3}^{2} + 
+\]
+\[
+\ldots(\frac{1}{2} Ixx {sin}^{2}(q_{5}) + \frac{1}{2} Iyy {cos}^{2}(q_{6}) - (\frac{1}{2} Iyy - \frac{1}{2} Izz) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2} + 
+\]
+\[
+\dots(\frac{1}{2} Izz + \frac{1}{2} (Iyy - Izz) {cos}^{2}(q_{6})) \dot{q}_{5}^{2} + 
+\]
+\[
+\ldots\frac{1}{2} Ixx \dot{q}_{6}^{2} - Ixx {sin}(q_{5}) \dot{q}_{4} \dot{q}_{6} + (Iyy + Izz) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{5}+ g m q_{3}
+\]
+
 with $\mathcal{L}(q)$ defined this allows us to find the corresponding
 Euler-Lagrange equations of motions from the following equation:
 
@@ -348,6 +363,30 @@ x = [q_{1}, q_{2}, q_{3}, q_{4}, q_{5}, q_{6}, \dot{q}_{1}, \dot{q}_{2}, \dot{q}
 where,
 \[
 \frac{d\dot{q_{4}}}{dt} = 
+\frac{A_{1}}{(Izz + (Iyy - Izz) {cos}^{2}(q_{6})) (2 Ixx {sin}^{2}(q_{5}) + (Iyy - Izz) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+where:
+% \resizebox{1.3 \textwidth}{!}
+\[
+A_{1} = (-(Iyy + Izz)((Ixx + (Iyy - Izz) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{6}) \dot{q}_{4}^{2} +
+\]
+\[
+\ldots(Ixx + (Iyy + Izz) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} +
+\]
+\[ 
+\ldots(- Iyy + Izz) {sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} - Q_{5}){sin}(2 q_{6}) {cos}(q_{5}) -
+\]
+\[ 
+\ldots(2 Izz + 2 (Iyy - Izz) {cos}^{2}(q_{6}))((- Ixx + (Iyy - Izz) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} + 
+\]
+\[
+(Ixx + (Iyy - Izz) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(q_{5}) -
+\]
+\[ 
+\ldots(2 Izz + 2 (Iyy - Izz) {cos}^{2}(q_{6})) ((Ixx + (Iyy + Izz) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 Iyy + 0.5 Izz) {sin}(2 q_{6}) \dot{q}_{5}^{2} + 
+\]
+\[
+(- 0.125 Iyy + 0.125 Izz) {sin}(2 q_{5} - 2 q_{6}) + (0.125 Iyy - 0.125 Izz) {sin}(2 q_{5} + 2 q_{6}) + (1.5 Iyy - 0.5 Izz) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2}))
 \]
 \[
 \frac{d\dot{q_{5}}}{dt} = 
