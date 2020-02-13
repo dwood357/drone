@@ -185,7 +185,7 @@ Q_{6}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{6}
 The kinetic energy of the quadcopter is defined as:
 
 \[
-T(q)=\frac{1}{2}\dot{q}^{T}M(q)*\dot{q}
+T(q)=\frac{1}{2}\dot{q}^{T}M(q)\dot{q}
 \]
 
 where M(q) is defined as:
@@ -262,13 +262,13 @@ yielding,
 \mathcal{L}(q) = \frac{1}{2} m \dot{q}_{1}^{2} + \frac{1}{2} m \dot{q}_{2}^{2} + \frac{1}{2} m \dot{q}_{3}^{2} + 
 \]
 \[
-\ldots(\frac{1}{2} Ixx {sin}^{2}(q_{5}) + \frac{1}{2} Iyy {cos}^{2}(q_{6}) - (\frac{1}{2} Iyy - \frac{1}{2} Izz) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2} + 
+\ldots(\frac{1}{2} I_{xx} {sin}^{2}(q_{5}) + \frac{1}{2} I_{yy} {cos}^{2}(q_{6}) - (\frac{1}{2} I_{yy} - \frac{1}{2} I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2} + 
 \]
 \[
-\dots(\frac{1}{2} Izz + \frac{1}{2} (Iyy - Izz) {cos}^{2}(q_{6})) \dot{q}_{5}^{2} + 
+\dots(\frac{1}{2} I_{zz} + \frac{1}{2} (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \dot{q}_{5}^{2} + 
 \]
 \[
-\ldots\frac{1}{2} Ixx \dot{q}_{6}^{2} - Ixx {sin}(q_{5}) \dot{q}_{4} \dot{q}_{6} + (Iyy + Izz) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{5}+ g m q_{3}
+\ldots\frac{1}{2} I_{xx} \dot{q}_{6}^{2} - I_{xx} {sin}(q_{5}) \dot{q}_{4} \dot{q}_{6} + (I_{yy} + I_{zz}) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{5}+ g m q_{3}
 \]
 
 with $\mathcal{L}(q)$ defined this allows us to find the corresponding
@@ -292,107 +292,92 @@ Q_{3}(q)=m\ddot{q_{3}}-mg
 \]
 
 \[
-Q_{4}(q) = 2 I_{xx} {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} -  I_{xx} {sin}(q_{5}) \ddot{q}_{6} -  I_{xx} {cos}^{2}(q_{5}) \ddot{q}_{4} -  I_{xx} {cos}(q_{5}) \dot{q}_{5} \dot{q}_{6}\ldots
+Q_{4}(q) = - I_{xx} {sin}(q_{5}) \ddot{q}_{6} + (- I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} + 
+\]
+\[
+\ldots2 (I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) \ddot{q}_{4} +
+\]
+\[ 
+\ldots(I_{yy} + I_{zz}) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \ddot{q}_{5}
 \]
 
 \[
-\ldots +  I_{xx} \ddot{q}_{4} + \frac{1}{4} I_{yy} (- (\dot{q}_{5} - 2 \dot{q}_{6}) {cos}(q_{5} - 2 q_{6}) + (\dot{q}_{5} + 2 \dot{q}_{6}) {cos}(q_{5} + 2 q_{6})) \dot{q}_{5} + \frac{1}{4} I_{yy} (- {sin}(q_{5} - 2 q_{6}) + {sin}(q_{5} + 2 q_{6})) \ddot{q}_{5}\ldots
+Q_{5}(q) =(I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2} + (I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} + 
+\]
+\[
+\ldots(I_{yy} + I_{zz}) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \ddot{q}_{4} - (2 I_{yy} - 2 I_{zz}) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5} \dot{q}_{6} + (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \ddot{q}_{5}
 \]
 
 \[
-\ldots + 2 I_{yy} {sin}(q_{5}) {cos}(q_{5}) {cos}^{2}(q_{6}) \dot{q}_{4} \dot{q}_{5} - 2 I_{yy} {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + 2 I_{yy} {sin}(q_{6}) {cos}^{2}(q_{5}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6}\ldots
+Q_{6}(q)= - I_{xx} {sin}(q_{5}) \ddot{q}_{4} + I_{xx} \ddot{q}_{6} - (I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + 
 \]
-
-\[\ldots -  I_{yy} {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) \ddot{q}_{4} +  I_{yy} {cos}^{2}(q_{5}) \ddot{q}_{4} + \frac{1}{4} I_{zz} (- (\dot{q}_{5} - 2 \dot{q}_{6}) {cos}(q_{5} - 2 q_{6}) + (\dot{q}_{5} + 2 \dot{q}_{6}) {cos}(q_{5} + 2 q_{6})) \dot{q}_{5}\ldots
-\]
-
-\[\ldots + \frac{1}{4} I_{zz} (- {sin}(q_{5} - 2 q_{6}) + {sin}(q_{5} + 2 q_{6})) \ddot{q}_{5} - 2 I_{zz} {sin}(q_{5}) {cos}(q_{5}) {cos}^{2}(q_{6}) \dot{q}_{4} \dot{q}_{5}\ldots
-\]
-
-\[\ldots - 2 I_{zz} {sin}(q_{6}) {cos}^{2}(q_{5}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} +  I_{zz} {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) \ddot{q}_{4}
-\]
-
 \[
-Q_{5}(q) = -  I_{xx} {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2} +  I_{xx} {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} + \frac {1}{4} I_{yy} (- (\dot{q}_{5} - 2 \dot{q}_{6}) {cos}(q_{5} - 2 q_{6}) + (\dot{q}_{5} + 2 \dot{q}_{6}) {cos}(q_{5} + 2 q_{6})) \dot{q}_{4}\ldots
+\ldots(I_{yy} - I_{zz}) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5}^{2} - (I_{yy} + (I_{yy} - I_{zz}) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4}^{2}
 \]
 
-\[
-\ldots + \frac{1}{4} I_{yy} (- {sin}(q_{5} - 2 q_{6}) + {sin}(q_{5} + 2 q_{6})) \ddot{q}_{4} - \frac{1}{4} I_{yy} (- {cos}(q_{5} - 2 q_{6}) + {cos}(q_{5} + 2 q_{6})) \dot{q}_{4} \dot{q}_{5}\ldots
-\]
-
-\[
-\ldots-  I_{yy} {sin}(q_{5}) {cos}(q_{5}) {cos}^{2}(q_{6}) \dot{q}_{4}^{2} +  I_{yy} {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2}- 2.0 I_{yy} {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5} \dot{q}_{6}  \ldots
-\]
-
-\[
-\ldots+  I_{yy} {cos}^{2}(q_{6}) \ddot{q}_{5} + \frac{1}{4} I_{zz} (- (\dot{q}_{5} - 2 \dot{q}_{6}) {cos}(q_{5} - 2 q_{6}) + (\dot{q}_{5} + 2 \dot{q}_{6}) {cos}(q_{5} + 2 q_{6})) \dot{q}_{4}\ldots
-\]
-
-\[
-\ldots + \frac{1}{4} I_{zz} (- {sin}(q_{5} - 2 q_{6}) + {sin}(q_{5} + 2 q_{6})) \ddot{q}_{4} - \frac{1}{4} I_{zz} (- {cos}(q_{5} - 2 q_{6}) + {cos}(q_{5} + 2 q_{6})) \dot{q}_{4} \dot{q}_{5} \ldots
-\]
-
-\[\ldots +  I_{zz} {sin}(q_{5}) {cos}(q_{5}) {cos}^{2}(q_{6}) \dot{q}_{4}^{2} + 2.0 I_{zz} {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5} \dot{q}_{6} -  I_{zz} {cos}^{2}(q_{6}) \ddot{q}_{5} +  I_{zz} \ddot{q}_{5}
-\]
-
-\[
-Q_{6}(q)=-I_{xx}sin(q_{5})\ddot{q}_{4} - I_{xx}cos(q_{5})\dot{q}_{4}\dot{q}_{5} + I_{xx}\ddot{q}_{6} - \frac{1}{4}I_{yy}(2cos(q_{5} - 2 q_{6}) + 2cos(q_{5} + 2 q_{6}))\dot{q}_{4}\dot{q}_{5}\ldots
-\]
-
-\[
-\ldots - I_{yy}sin(q_{6})cos(q_{5})^{2}cos(q_{6})\dot{q}_{4}^{2} + I_{yy} sin(q_{6})cos(q_{6})\dot{q}_{5}^{2} - \frac{1}{4} I_{zz} (2cos(q_{5} - 2 q_{6}) + 2cos(q_{5} + 2 q_{6})) \dot{q}_{4}\dot{q}_{5}\ldots
-\]
-
-\[
-\ldots + I_{zz}sin(q_{6})cos(q_{5})^{2}cos(q_{6})\dot{q}_{4}^{2} - I_{zz} sin(q_{6})cos(q_{6})\dot{q}_{5}^{2}
-\]
 
 \subsection*{State Space Representation}
 To define a controller, the dynamics of the system must be first put into state space form:
 \[
 x = [q,\dot{q}]^T
 \]
-
+and,
 \[
-x = [q_{1}, q_{2}, q_{3}, q_{4}, q_{5}, q_{6}, \dot{q}_{1}, \dot{q}_{2}, \dot{q}_{3}, \dot{q}_{4}, \dot{q}_{5}, \dot{q}_{6}]^T
-\]
-
-\[
-\frac{dx}{dt} = [\dot{q}_{1}, \dot{q}_{2}, \dot{q}_{3}, \dot{q}_{4}, \dot{q}_{5}, \dot{q}_{6}, \ddot{q}_{1}, \ddot{q}_{2}, \ddot{q}_{3}, \ddot{q}_{4}, \ddot{q}_{5}, \ddot{q}_{6}]^T
+\dot{x} = [\frac{dq}{dt},\frac{d\dot{q}}{dt}]^T
 \]
 where,
+\[\frac{d\dot{q_{1}}}{dt} = \frac{Q_{1}}{m}
+\]
+
+\[\frac{d\dot{q_{2}}}{dt} = \frac{Q_{2}}{m}
+\]
+
+\[\frac{d\dot{q_{3}}}{dt} = g + \frac{Q_{3}}{m}
+\]
+
 \[
 \frac{d\dot{q_{4}}}{dt} = 
-\frac{A_{1}}{(Izz + (Iyy - Izz) {cos}^{2}(q_{6})) (2 Ixx {sin}^{2}(q_{5}) + (Iyy - Izz) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\frac{A_{1}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
 \]
 where:
-% \resizebox{1.3 \textwidth}{!}
 \[
-A_{1} = (-(Iyy + Izz)((Ixx + (Iyy - Izz) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{6}) \dot{q}_{4}^{2} +
+A_{1} = -(I_{yy} + I_{zz})((I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{6}) \dot{q}_{4}^{2} +
 \]
 \[
-\ldots(Ixx + (Iyy + Izz) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} +
+\ldots(I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} +
 \]
 \[ 
-\ldots(- Iyy + Izz) {sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} - Q_{5}){sin}(2 q_{6}) {cos}(q_{5}) -
+\ldots(- I_{yy} + I_{zz}) {sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} - Q_{5}){sin}(2 q_{6}) {cos}(q_{5}) -
 \]
 \[ 
-\ldots(2 Izz + 2 (Iyy - Izz) {cos}^{2}(q_{6}))((- Ixx + (Iyy - Izz) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} + 
+\ldots(2 I_{zz} + 2 (I_{yy} - I_{zz}) {cos}^{2}(q_{6}))((- I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} + 
 \]
 \[
-(Ixx + (Iyy - Izz) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(q_{5}) -
+(I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(q_{5}) -
 \]
 \[ 
-\ldots(2 Izz + 2 (Iyy - Izz) {cos}^{2}(q_{6})) ((Ixx + (Iyy + Izz) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 Iyy + 0.5 Izz) {sin}(2 q_{6}) \dot{q}_{5}^{2} + 
+\ldots(2 I_{zz} + 2 (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) ((I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 I_{yy} + 0.5 I_{zz}) {sin}(2 q_{6}) \dot{q}_{5}^{2} + 
 \]
 \[
-(- 0.125 Iyy + 0.125 Izz) {sin}(2 q_{5} - 2 q_{6}) + (0.125 Iyy - 0.125 Izz) {sin}(2 q_{5} + 2 q_{6}) + (1.5 Iyy - 0.5 Izz) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2}))
+(- 0.125 I_{yy} + 0.125 I_{zz}) {sin}(2 q_{5} - 2 q_{6}) + (0.125 I_{yy} - 0.125 I_{zz}) {sin}(2 q_{5} + 2 q_{6}) + (1.5 I_{yy} - 0.5 I_{zz}) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2})
+\]
+
+\[
+\frac{d\dot{q_{5}}}{dt} = \frac{A_{2}}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+where,
+\[A_{2} = 
 \]
 \[
-\frac{d\dot{q_{5}}}{dt} = 
+\frac{d\dot{q_{6}}}{dt} =
+\frac{A_{3}}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
 \]
-\[
-\frac{d\dot{q_{6}}}{dt} = 
+where,
+\[A_{3} =
 \]
 
 \end{document}
