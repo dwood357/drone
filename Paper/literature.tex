@@ -11,19 +11,23 @@
 In order to properly define the dynamics of a quadcopter, two coordinate systems will be defined, body \& inertial coordinate systems. In the inertial frame the position will be defined by $X_{G}$, $Y_{G}$, $Z_{G}$ with angles of rotation in the body frame defined as $\psi$,$\theta$,$\phi$, which allows to define the generalized coordinates q:
 
 \[
-q=\left[\begin{array}{cccccc}
-X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}\right]
+q=[\begin{array}{cccccc}
+X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]
 \]
 
-The location of the body frame defined from the origin of the inertial
-frame is defined by the following:
+The vector defined from the origin of the inertial
+frame to the certain of the body is as follows:
 
 \[
-\overrightarrow{r_{G}}=X_{G}\overrightarrow{I}+Y_{G}\overrightarrow{J}+Z_{G}\overrightarrow{K}
+\overrightarrow{r_{G}}= \left[\begin{array}{c}
+X_{G}\\
+Y_{G}\\
+Z_{G}
+\end{array}\right]
 \]
 
 In the case of the quadcopter where there are four motors, there are
-four forces produced by the motors defined in the positive $\overrightarrow{k}$direction
+four forces produced by the motors defined in the positive $\overrightarrow{k}$ direction
 of the body frame, in general the forces are defined as:
 
 \[
@@ -64,7 +68,8 @@ R(q)=\left[\begin{array}{ccc}
 \cos(q_{4})\cos(q_{5}) & \cos(q_{5})\sin(q_{4}) & \-sin(q_{5})\\
 \cos(q_{4})\sin(q_{6})\sin(q_{5})\-cos(q_{6})\sin(q_{4}) & \cos(q_{6})\cos(q_{4})+\sin(q_{6})\sin(q_{4})\sin(q_{5}) & \cos(q_{5})\sin(q_{6})\\
 \sin(q_{6})\sin(q_{4})+\cos(q_{6})\cos(q_{4})\sin(q_{5}) & \cos(q_{6})\sin(q_{4})\sin(q_{5})-\cos(q_{4})\sin(q_{6}) & \cos(q_{6})\cos(q_{5})
-\end{array}\right]\]
+\end{array}\right]
+\]
 
 which yields the force resultant in the inertial frame as:
 
@@ -98,13 +103,13 @@ Using the forces and their position vectors the moment about origin
 G in the body frame is defined as:
 
 \[
-\overrightarrow{M_{G}}=\sum_{i=1}^{4}(\overrightarrow{r_{i}}x\overrightarrow{F_{i}})
+\overrightarrow{M_{G}}=\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}})
 \]
 
 this will also need to be rotated into the inertial frame yielding:
 
 \[
-\overrightarrow{M_{G}}(q)=\left[\begin{array}{c}
+\overrightarrow{M_{G}}=\left[\begin{array}{c}
 cosq_{4}cosq_{5}M_{1}+cosq_{5}sinq_{4}M_{2}\\
 -(cosq_{6}sinq_{4}-cosq_{4}sinq_{6}sinq_{5})M_{1}+(cosq_{6}cosq_{4}+sinq_{6}sinq_{4}sinq_{5})M_{2}\\
 (sinq_{6}sinq_{4}+cosq_{6}cosq_{4}sinq_{5})M_{1}-(cosq_{4}sinq_{6}-cosq_{6}sinq_{4}sinq_{5})M_{2}
@@ -146,38 +151,38 @@ Expressing these in the generalized coordinates of q yields:
 \]
 
 With the local angular velocities and the moments in the body frame
-rotated into the inertial, the generalized forces $Q_{i}$$(q)$ can
+rotated into the inertial, the generalized forces $Q_{i}$ can
 be defined by:
 
 \[
-Q_{j}=\overrightarrow{F}_{R}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{j}}+\overrightarrow{M}_{G}\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{j}}}
+Q_{i}=\overrightarrow{F}_{R}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{i}}+\overrightarrow{M}_{G}\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{j}}}, i=1:6, j=4:6
 \]
 
-This allows for a full generalized force representation as:
+% This allows for a full generalized force representation as:
 
-\[
-Q_{1}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{1}}
-\]
+% \[
+% Q_{1}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{1}}
+% \]
 
-\[
-Q_{2}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{2}}
-\]
+% \[
+% Q_{2}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{2}}
+% \]
 
-\[
-Q_{3}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{3}}
-\]
+% \[
+% Q_{3}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{3}}
+% \]
 
-\[
-Q_{4}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{4}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{4}}}
-\]
+% \[
+% Q_{4}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{4}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{4}}}
+% \]
 
-\[
-Q_{5}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{5}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{5}}}
-\]
+% \[
+% Q_{5}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{5}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{5}}}
+% \]
 
-\[
-Q_{6}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{6}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{6}}}
-\]
+% \[
+% Q_{6}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{6}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{6}}}
+% \]
 
 
 \subsection*{The Kinetic Energy and the Equations of Motion}
@@ -340,6 +345,7 @@ where,
 \frac{A_{1}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
 \]
 where:
+
 \[
 A_{1} = -(I_{yy} + I_{zz})((I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{6}) \dot{q}_{4}^{2} +
 \]
@@ -367,8 +373,25 @@ A_{1} = -(I_{yy} + I_{zz})((I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q
 {2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
 \]
 where,
-\[A_{2} = 
+
+\[A_{2} =(0.5 I_{yy} + 0.5 I_{zz}) ((- 0.5 I_{yy} + 0.5 I_{zz}) {sin}(2 q_{6}) \dot{q}_{5}^{2} + (I_{xx} {cos}(q_{5}) + (0.5 I_{yy} + 0.5 I_{zz}) {cos}(q_{5}) {cos}(2 q_{6})) \dot{q}_{4} \dot{q}_{5} +
 \]
+\[
+\ldots((- 0.125 I_{yy} + 0.125 I_{zz}) {sin}(2 q_{5} - 2 q_{6}) + (0.125 I_{yy} - 0.125 I_{zz}) {sin}(2 q_{5} + 2 q_{6}) +
+\]
+\[
+\ldots(0.75 I_{yy} - 0.25 I_{zz}) {sin}(2 q_{6})) \dot{q}_{4}^{2} + Q_{6}) {sin}(2 q_{5}) {sin}(2 q_{6}) + (I_{yy} + I_{zz}) ((- I_{xx} + (- I_{yy} + I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots(I_{xx} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5})) {sin}(2 q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(2 q_{6}) {cos}(q_{5}) -
+\]
+\[
+\ldots(2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) ((0.5 I_{xx} + (0.5 I_{yy} - 0.5 I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4}^{2} +
+\]
+\[
+\ldots(- I_{yy} + I_{zz}) {sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} + (I_{xx} {cos}(q_{5}) + (I_{yy} + I_{zz}) {cos}(q_{5}) {cos}(2 q_{6})) \dot{q}_{4} \dot{q}_{6} - Q_{6})
+\]
+
 \[
 \frac{d\dot{q_{6}}}{dt} =
 \frac{A_{3}}
@@ -377,8 +400,49 @@ where,
 { + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
 \]
 where,
-\[A_{3} =
+
+\[
+A_{3} = - 0.25 I_{xx} (I_{yy} + I_{zz})((- I_{yy} + I_{zz}){sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} + (0.5 I_{xx} {sin}(2 q_{5}) + (I_{yy} - I_{zz}) {sin}(q_{5}) {cos}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2}+
+\]
+\[
+\ldots(I_{xx} {cos}(q_{5}) + (I_{yy} + I_{zz}) {cos}(q_{5}) {cos}(2 q_{6})) \dot{q}_{4} \dot{q}_{6} - Q_{5}) {sin}(2 q_{5}) {sin}(2 q_{6}) - 
+\]
+\[
+\ldots2 I_{xx} (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) ((- 0.5 I_{xx} + (- I_{yy} + I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots(I_{xx} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5})) {sin}(2 q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(q_{5}) +
+\]
+\[
+\ldots((I_{yy} - I_{zz}) (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) + 2 (I_{yy} + I_{zz})^{2} {sin}(q_{6})) ((I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots(- 0.5 I_{yy} + 0.5 I_{zz}) {sin}(2 q_{6}) \dot{q}_{5}^{2} + ((- 0.25 I_{yy} + 0.25 I_{zz}) {sin}(2 q_{5} - 2 q_{6}) + (0.25 I_{yy} + 0.25 I_{zz}) {sin}(2 q_{5} + 2 q_{6}) +
+\]
+\[
+\ldots(0.75 I_{yy} - 0.25 I_{zz}) {sin}(2 q_{6})) \dot{q}_{4}^{2} + Q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) 
 \]
 
+To control the dynamics of the system the state space needs to be written in the following form:
+
+\[
+\dot{x} = F(q,\dot{q}) + G(q,\dot{q}) Q
+\]
+
+where $G(q,\dot{q})$ is a function of the states, and the generalized forces $Q_{1x12}$ are the system inputs.
+
+\[
+Q = \left[\begin{array}{c}
+0\\
+0\\
+\vdots\\
+Q_{1}\\
+Q_{2}\\
+Q_{3}\\
+Q_{4}\\
+Q_{5}\\
+Q_{6}\\
+\end{array}\right]
+\]
 \end{document}
 
