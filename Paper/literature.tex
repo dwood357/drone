@@ -1,5 +1,6 @@
 \documentclass[10pt, letterpaper]{article}
 \usepackage{mathtools}
+\usepackage{amsmath}
 \usepackage[margin=0.5in]{geometry}
 \setcounter{MaxMatrixCols}{12}
 \begin{document}
@@ -236,17 +237,17 @@ I_{xx} & 0 & 0\\
 which expands to:
 
 \[
-T(q)=\frac{1}{2}[m\dot{q_{1}}^{2}+m\dot{q_{2}}^{2}+m\dot{q_{3}}^{2}+\dot{q_{4}}^{2}(I_{zz}cos(q_{5})^{2}cos(q_{6})^{2}+I_{yy}cos(q_{5})^{2}sin(q_{6})^{2}+I_{xx}sin(q_{5})^{2})+\ldots
+T(q)=\frac{1}{2}(m\dot{q_{1}}^{2}+m\dot{q_{2}}^{2}+m\dot{q_{3}}^{2}+\dot{q_{4}}^{2}((I_{yy}+I_{zz})cos(q_{5})^{2}cos(q_{6})^{2}+I_{xx}sin(q_{5})^{2})+\ldots
 \]
 
 \[
-\ldots+\dot{q_{5}}^{2}(I_{yy}cos(q_{6})^{2}+I_{zz}sin(q_{6})^{2})+2\dot{q_{5}}\dot{q_{4}}\sigma+\dot{q_{6}}^{2}I_{xx}-2\dot{q_{6}}\dot{q_{4}}I_{xx}sin(q_{5})]
+\ldots+\dot{q_{5}}^{2}(I_{yy}cos(q_{6})^{2}+I_{zz}sin(q_{6})^{2})+2\dot{q_{5}}\dot{q_{4}}\sigma+\dot{q_{6}}^{2}I_{xx}-2\dot{q_{6}}\dot{q_{4}}I_{xx}sin(q_{5}))
 \]
 
 where:
 
 \[
-\sigma=I_{yy}cos(q_{5})cos(q_{6})sin(q_{6})-I_{zz}cos(q_{5})cos(q_{6})sin(q_{6})
+\sigma=\frac{1}{2}(I_{yy}-I_{zz}){cos}(q_{5}){sin}(2q_{6})
 \]
 
 The potential energy of the drone is defined as:
@@ -270,10 +271,10 @@ yielding,
 \ldots(\frac{1}{2} I_{xx} {sin}^{2}(q_{5}) + \frac{1}{2} I_{yy} {cos}^{2}(q_{6}) - (\frac{1}{2} I_{yy} - \frac{1}{2} I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2} + 
 \]
 \[
-\dots(\frac{1}{2} I_{zz} + \frac{1}{2} (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \dot{q}_{5}^{2} + 
+\dots(\frac{1}{2} I_{zz} + \frac{1}{2} (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \dot{q}_{5}^{2} + \frac{1}{2} I_{xx} \dot{q}_{6}^{2} - I_{xx} {sin}(q_{5}) \dot{q}_{4} \dot{q}_{6} 
 \]
 \[
-\ldots\frac{1}{2} I_{xx} \dot{q}_{6}^{2} - I_{xx} {sin}(q_{5}) \dot{q}_{4} \dot{q}_{6} + (I_{yy} + I_{zz}) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{5}+ g m q_{3}
+\ldots+ \frac{1}{2}(I_{yy} + I_{zz}) {cos}(q_{5}){sin}(2q_{6}) \dot{q}_{4} \dot{q}_{5}+ g m q_{3}
 \]
 
 with $\mathcal{L}(q)$ defined this allows us to find the corresponding
@@ -303,14 +304,14 @@ Q_{4}(q) = - I_{xx} {sin}(q_{5}) \ddot{q}_{6} + (- I_{xx} + (I_{yy} - I_{zz}) {c
 \ldots2 (I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) \ddot{q}_{4} +
 \]
 \[ 
-\ldots(I_{yy} + I_{zz}) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \ddot{q}_{5}
+\ldots(I_{yy} + I_{zz}) {cos}(q_{5}) {sin}(2q_{6}) \ddot{q}_{5}
 \]
 
 \[
 Q_{5}(q) =(I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2} + (I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} + 
 \]
 \[
-\ldots(I_{yy} + I_{zz}) {sin}(q_{6}) {cos}(q_{5}) {cos}(q_{6}) \ddot{q}_{4} - (2 I_{yy} - 2 I_{zz}) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5} \dot{q}_{6} + (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \ddot{q}_{5}
+\ldots(I_{yy} + I_{zz}) {cos}(q_{5}) {sin}(2q_{6}) \ddot{q}_{4} - (2 I_{yy} - 2 I_{zz}) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5} \dot{q}_{6} + (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \ddot{q}_{5}
 \]
 
 \[
@@ -432,10 +433,27 @@ To control the dynamics of the system the state space needs to be written in the
 where $G(q,\dot{q})$ is a function of the states, and the generalized forces $Q_{1x12}$ are the system inputs.
 
 \[
+G(q,\dot{q}) = \begin{bmatrix}
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&\frac{1}{m}&0&0&0&0&0\\
+0&0&0&0&0&0&0&\frac{1}{m}&0&0&0&0\\
+0&0&0&0&0&0&0&0&\frac{1}{m}&0&0&0\\
+0&0&0&0&0&0&0&0&0&g_{1010}&g_{1011}&g_{1012}\\
+0&0&0&0&0&0&0&0&0&g_{1110}&g_{1111}&g_{1112}\\
+0&0&0&0&0&0&0&0&0&g_{1210}&g_{1211}&g_{1212}\\
+\end{bmatrix},
 Q = \left[\begin{array}{c}
 0\\
 0\\
-\vdots\\
+0\\
+0\\
+0\\
+0\\
 Q_{1}\\
 Q_{2}\\
 Q_{3}\\
@@ -443,6 +461,55 @@ Q_{4}\\
 Q_{5}\\
 Q_{6}\\
 \end{array}\right]
+\]
+
+where,
+\[
+g_{1010} = \frac{(I_{yy}-I_{zz})cos{q_{6}}^2 + I_{zz}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+
+\[
+g_{1011} = \frac{(I_{yy}+I_{zz})cos{q_{5}}sin{2q_{6}}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+
+\[
+g_{1012} = \frac{2sin{q_{5}}((I_{yy}-I_{zz})cos{q_{6}}^2 + I_{zz})}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+
+\[
+g_{1110} = \frac{(I_{yy}+I_{zz})cos(q_{5})sin(2q_{6})}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+
+\[
+g_{1111} = \frac{2I_{xx}{sin}^2(q_{5})+(I_{yy}-I_{zz}){cos}^2(q_{5}){cos}^2(q_{6})}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+
+\[
+g_{1112} = \frac{\frac{1}{2}(I_{yy}+I_{zz}){sin}(2q_{5}){sin}(2q_{6})}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+
+\[
+g_{1210} = \frac{2{sin}(q_{5})((I_{yy}-I_{zz}){cos}^2(q_{6})+I_{zz})}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
+\]
+
+\[
+g_{1211} = \frac{\frac{1}{2}(I_{yy}+I_{zz}){sin}(2q_{5}){sin}(2q_{6})}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
+\]
+
+\[
+g_{1212} = \frac{(I_{yy}-I_{zz})^2{cos}^2(q_{5}){cos}^4(q_{6}) + 2(I_{yy}+I_{zz})^2{sin}^2(q_{6}){cos}^2(q_{5}){cos}^2(q_{6})+I_{zz}{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}-I_{zz})}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
 \]
 \end{document}
 
