@@ -1,10 +1,29 @@
 \begin{thebibliography}{1}
 
+\bibitem{FanniMohamed2017AN6Q}
+Mohamed Fanni and Ahmed Khalifa.
+\newblock A new 6-dof quadrotor manipulation system: Design, kinematics,
+  dynamics, and control.
+\newblock {\em IEEE/ASME Transactions on Mechatronics}, 22(3):1315--1326, 2017.
+
 \bibitem{FarameeVeeravat2014EotS}
 Veeravat Faramee and Viboon Sangveraphunsiri.
 \newblock Experiment of the state variable feedback for a quadrotor.
 \newblock {\em Applied Mechanics and Materials}, 619(Mechanical and Electrical
   Technology VI):267--272, 2014.
+
+\bibitem{HaomiaoHuang2009Aaco}
+Haomiao Huang, G.M Hoffmann, S.L Waslander, and C.J Tomlin.
+\newblock Aerodynamics and control of autonomous quadrotor helicopters in
+  aggressive maneuvering.
+\newblock In {\em 2009 IEEE International Conference on Robotics and
+  Automation}, pages 3277--3282. IEEE, 2009.
+
+\bibitem{KhalifaA2012Maco}
+A~Khalifa, M~Fanni, A~Ramadan, and Ahmed Abo-Ismail.
+\newblock Modeling and control of a new quadrotor manipulation system.
+\newblock In {\em 2012 First International Conference on Innovative Engineering
+  Systems}, pages 109--114. IEEE, 2012.
 
 \bibitem{DenisKotarski2016CDFU}
 Denis Kotarski, Zoran Benić, and Matija Krznar.
