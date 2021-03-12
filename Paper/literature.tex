@@ -1,30 +1,41 @@
 \documentclass[10pt, letterpaper]{article}
 \usepackage{mathtools}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[margin=0.5in]{geometry}
 \setcounter{MaxMatrixCols}{12}
+\newcommand{\R}{\mathbb{R}}
 \begin{document}
 \title{Control Of A Quadcopter}
 \author{Daniel Wood}
 \maketitle
 
 \section{Generalized Coordinates}
-In order to properly define the dynamics of a quadcopter, two coordinate systems will be defined, body \& inertial coordinate systems. In the inertial frame the position will be defined by $X_{G}$, $Y_{G}$, $Z_{G}$ with angles of rotation in the body frame defined as $\psi$,$\theta$,$\phi$, which allows to define the generalized coordinates q:
+
+When analyzing the dynamics of a quadcopter, two coordinate systems need to be defined, the body \& inertial coordinate frames. The inertial frame is earth fixed, this can be thought of as a centralized home position that all motion is relative to, in this case with a center point defined as O. The body frame is a coordinate frame defined from the center of gravity of the quadcopter, this will be defined with a center point of G. Managing two coordinate frames in a dynamics system can be acheived efficiently by introducing a generalized coordinate q, that is comprised of the neccesary variables to fully define the dyanmics of the body frame in the inertial.
+
+A vector can then be related from O to G as $\overrightarrow{r_{G}}$:
 
 \[
-q=[\begin{array}{cccccc}
-X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]
-\]
-
-The vector defined from the origin of the inertial
-frame to the certain of the body is as follows:
-
-\[
-\overrightarrow{r_{G}}= \left[\begin{array}{c}
+\overrightarrow{r_{G}} = \left[\begin{array}{c}
 X_{G}\\
 Y_{G}\\
 Z_{G}
 \end{array}\right]
+= \left[\begin{array}{c}
+q_{1}\\
+q_{2}\\
+q_{3}
+\end{array}\right]
+\]
+
+To relate the motion of the body in the inertial frame, three angles of rotation $\psi$,$\theta$,$\phi$ are needed, which are known in literature as Type I Euler angles[cite greenwood]. This leads to the state vector of the system in generalized coordinates q $\in \R^{6}$ :
+%https://nbviewer.jupyter.org/github/plusk01/nonlinearquad/blob/master/quadrotor_model.ipynb
+\[
+q=[\begin{array}{cccccc}
+X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]
+= [\begin{array}{cccccc}
+q_{1} & q_{2} & q_{3} & q_{4} & q_{5} & q_{6}\end{array}]
 \]
 
 In the case of the quadcopter where there are four motors, there are
@@ -56,9 +67,9 @@ Where the rotation matrix is defined as:
 
 \[
 R(\psi,\theta,\phi)=\left[\begin{array}{ccc}
-cos\psi cos\theta & cos\theta sin\psi & -sin\theta\\
-cos\psi sin\phi sin\theta-cos\phi sin\psi & cos\phi cos\psi+sin\phi sin\psi sin\theta & cos\theta sin\phi\\
-sin\phi sin\psi+cos\phi cos\psi sin\theta & cos\phi sin\psi sin\theta-cos\psi sin\phi & cos\phi cos\theta
+\cos\psi \cos\theta & \cos\theta \sin\psi & -\sin\theta\\
+\cos\psi \sin\phi \sin\theta - \cos\phi \sin\psi & \cos\phi \cos\psi + \sin\phi \sin\psi \sin\theta & \cos\theta \sin\phi\\
+\sin\phi \sin\psi + \cos\phi \cos\psi \sin\theta & \cos\phi \sin\psi \sin\theta - \cos\psi \sin\phi & \cos\phi \cos\theta
 \end{array}\right]
 \]
 
@@ -66,8 +77,8 @@ Which can be expressed in terms of the generalized coordinates q as:
 
 \[
 R(q)=\left[\begin{array}{ccc}
-\cos(q_{4})\cos(q_{5}) & \cos(q_{5})\sin(q_{4}) & \-sin(q_{5})\\
-\cos(q_{4})\sin(q_{6})\sin(q_{5})\-cos(q_{6})\sin(q_{4}) & \cos(q_{6})\cos(q_{4})+\sin(q_{6})\sin(q_{4})\sin(q_{5}) & \cos(q_{5})\sin(q_{6})\\
+\cos(q_{4})\cos(q_{5}) & \cos(q_{5})\sin(q_{4}) & -\sin(q_{5})\\
+\cos(q_{4})\sin(q_{6})\sin(q_{5}) - \cos(q_{6})\sin(q_{4}) & \cos(q_{6})\cos(q_{4})+\sin(q_{6})\sin(q_{4})\sin(q_{5}) & \cos(q_{5})\sin(q_{6})\\
 \sin(q_{6})\sin(q_{4})+\cos(q_{6})\cos(q_{4})\sin(q_{5}) & \cos(q_{6})\sin(q_{4})\sin(q_{5})-\cos(q_{4})\sin(q_{6}) & \cos(q_{6})\cos(q_{5})
 \end{array}\right]
 \]
@@ -75,7 +86,7 @@ R(q)=\left[\begin{array}{ccc}
 which yields the force resultant in the inertial frame as:
 
 \[
-\overrightarrow{F_{R}}(q)=\left[\begin{array}{c}
+\overrightarrow{F_{R}}=\left[\begin{array}{c}
 -sin(q_{5})\cdot(F_{1}+F_{2}+F_{3}+F_{4}-mg)\\
 cos(q_{5})\sin(q_{6})\cdot(F_{1}+F_{2}+F_{3}+F_{4}-mg)\\
 cos(q_{6})\cos(q_{5})\cdot(F_{1}+F_{2}+F_{3}+F_{4}-mg)
@@ -107,10 +118,11 @@ G in the body frame is defined as:
 \overrightarrow{M_{G}}=\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}})
 \]
 
-this will also need to be rotated into the inertial frame yielding:
+this will also need to be rotated into the inertial frame with a center point of O yielding:
 
 \[
-\overrightarrow{M_{G}}=\left[\begin{array}{c}
+\overrightarrow{M_O} =
+\overrightarrow{M_{G}} \cdot R(q)=\left[\begin{array}{c}
 cosq_{4}cosq_{5}M_{1}+cosq_{5}sinq_{4}M_{2}\\
 -(cosq_{6}sinq_{4}-cosq_{4}sinq_{6}sinq_{5})M_{1}+(cosq_{6}cosq_{4}+sinq_{6}sinq_{4}sinq_{5})M_{2}\\
 (sinq_{6}sinq_{4}+cosq_{6}cosq_{4}sinq_{5})M_{1}-(cosq_{4}sinq_{6}-cosq_{6}sinq_{4}sinq_{5})M_{2}
@@ -125,7 +137,7 @@ M_{1}=\frac{b}{2}F_{1}+\frac{b}{2}F_{2}-\frac{b}{2}F_{3}-\frac{b}{2}F_{4}
 M_{2}=\frac{a}{2}F_{1}-\frac{a}{2}F_{2}+\frac{a}{2}F_{3}-\frac{a}{2}F_{4}
 \]
 
-For a full depiction of the dynamics of the system in the global frame
+For a full depiction of the dynamics of the system in the inertial frame
 first we start with looking at the local angular velocities as expressed
 in the body frame:
 
@@ -188,7 +200,7 @@ Q_{i}=\overrightarrow{F}_{R}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{i}
 
 \subsection*{The Kinetic Energy and the Equations of Motion}
 
-The kinetic energy of the quadcopter is defined as:
+The kinetic energy of the quadcopter is defined based on Koenig's Theorem [Cite Greenwood] which states the kinetic energy is the sum of the kinetic energy due to translational velocity of the center of mass as well as the rotation:
 
 \[
 T(q)=\frac{1}{2}\dot{q}^{T}M(q)\dot{q}
@@ -278,7 +290,7 @@ yielding,
 \]
 
 with $\mathcal{L}(q)$ defined this allows us to find the corresponding
-Euler-Lagrange equations of motions from the following equation:
+Euler-Lagrange equations of motions from the following equation, which is also known as the fundamental holonomic form of Lagrange's equation:
 
 \[
 \frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{j}}})-\frac{\partial\mathcal{L}(q)}{\partial q_{j}}=Q_{j}(q)
