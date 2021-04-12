@@ -38,9 +38,8 @@ X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]
 q_{1} & q_{2} & q_{3} & q_{4} & q_{5} & q_{6}\end{array}]
 \]
 
-In the case of the quadcopter where there are four motors, there are
-four forces produced by the motors defined in the positive $\overrightarrow{k}$ direction
-of the body frame, in general the forces are defined as:
+The predominat forces acting on a quadcopter are gravity and the forces created by the motors.
+In the case of the quadcopter, there are four forces produced by the motors defined in the positive $\overrightarrow{k}$ direction of the body frame, in general the forces are defined as:
 
 \[
 \overrightarrow{F_{i}}=\left[\begin{array}{c}
@@ -63,7 +62,7 @@ is acheived by the rotation matrix:
 \overrightarrow{F_{R}}=R(\psi,\theta,\phi)\cdot \overrightarrow{F_{R}}
 \]
 
-Where the rotation matrix is defined as:
+With:
 
 \[
 R(\psi,\theta,\phi)=\left[\begin{array}{ccc}
@@ -73,7 +72,7 @@ R(\psi,\theta,\phi)=\left[\begin{array}{ccc}
 \end{array}\right]
 \]
 
-Which can be expressed in terms of the generalized coordinates q as:
+Or in terms of the generalized coordinates q:
 
 \[
 R(q)=\left[\begin{array}{ccc}
@@ -83,7 +82,7 @@ R(q)=\left[\begin{array}{ccc}
 \end{array}\right]
 \]
 
-which yields the force resultant in the inertial frame as:
+yielding the force resultant in the inertial frame as:
 
 \[
 \overrightarrow{F_{R}}=\left[\begin{array}{c}
