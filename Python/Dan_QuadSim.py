@@ -18,13 +18,20 @@ def rk4(f, y, dt):
     Solves an autonomous (time-invariant) differential equation of the form dy/dt = f(y).
     """
     k1 = f(y)
-    k2 = f(y + dt/2*k1)
-    k3 = f(y + dt/2*k2)
-    k4 = f(y + dt  *k3)
+    k2 = f(y + dt/2 * k1)
+    k3 = f(y + dt/2 * k2)
+    k4 = f(y + dt   * k3)
     
     rk = y + (dt/6)*(k1 + 2*k2 + 2*k3 + k4)
     
     return rk
+
+def position(x,y,z,steps):
+
+	x = np.linspace(0,x)
+	y = np.linspace(0,y)
+	z = np.linspace(0,z)
+
 
 class Quadrotor(object):
     """

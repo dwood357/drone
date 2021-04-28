@@ -1,0 +1,157 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside,twocolumn]{article}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+% \usepackage[sc]{mathpazo}
+\usepackage{mathptmx}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{Sliding Mode Control of a Quad-Copter for Autonomous Trajectory Tracking} % Article title
+\author{%
+\textsc{Daniel Wood, Majura Selekwa}\thanks{A thank you or further information} \\[1ex] % Your name
+\normalsize North Dakota State University \\ % Your institution
+\normalsize \href{mailto:daniel.wood@ndsu.edu}{daniel.wood@ndsu.edu} % Your email address
+%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+%\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
+%\normalsize University of Utah \\ % Second author's institution
+%\normalsize \href{mailto:jane@smith.com}{jane@smith.com} % Second author's email address
+}
+\date{\today} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+\begin{abstract}
+\noindent Unmanned air vehicles or drones have become ubiquitous in our daily lives; they are deployed in performing many tasks from dangerous military missions to simple recreation activities. One air vehicle that has become very popular is the quad-copter driven by four vertical and parallel propellers. Today quad-copters are deployed in many video recording and remote monitoring almost everywhere in the world. One area of interest for quad-copters has been in farming operations; these vehicles are used in farming operations for not only aerial monitoring of soil nitrogen levels but many other farm monitoring operations. One common aspect of most quad-copters is that they are teleoperated by the user, i.e., most of them are not yet fully autonomous. There must be a remote pilot who is connected to the quad-copter by a video link so that he/she can control the maneuver of the vehicle along the intended path. This paper intends to show that a quad-copter can be programmed to run autonomously along a predetermined trajectory by using sliding mode control strategy. Since trajectories in most farms are clearly well known in advance, then they can be programmed into the controller for the quad-copter to autonomously track. The design process involves using the intended trajectory to define the 3-D sliding surface and then letting the quad-copter controller switch about that surface while keeping the vehicle in the target trajectory. The workspace is defined as a 3-D space where the sliding surface is defined by fitting weighted spline functions on the coordinates of the intended trajectory to define the stable sliding surface whose stability lever increases as the vehicle moves towards the target point. Preliminary results compare the trajectories followed by the quad-copter and the intended trajectories by using the mean square deviation. As would be expected, the performance depends heavily on the speed of the quad-copter; higher speeds on sharp curvature are associated with large tracking errors than low speeds on similar curvatures, while the performance on straight line paths was considerably good. This is  most likely due to the switching speed because it seems that higher speeds should be associated with higher switching speeds also. The future work intends to study if parameterizing the 3-D splines using speed and time can improve the tracking performance where the switching rate will be made to be proportional to the number of spline functions that define the trajectory irrespective of the speed of the quad-copter. % Dummy abstract text - replace \blindtext with your abstract text
+\end{abstract}
+}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+% Print the title
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+
+\lettrine[nindent=0em,lines=3]{T} he work of this paper focuses not on simplifying the dynamics to the point where nonlinearites are neglected. But to include the full non-linear dynamics of the system, while using a variable switching tecnique referred to as sliding mode control in 3D with the purpose of autonomous trajectory tracking. This is achieved by first taking a Euler/Lagrange approach to determine the equations of motion. Next this system is put into the form of:
+
+\begin{equation}
+\dot{x} = F(x) + G(x)Q
+\end{equation}
+where Q is the input to the system.
+
+Since we are including all parts of the dynamics. Q is not just a final motor input, rather it is a measure of the moment created on the body as well as the angular rates. Which we then can decipher down to the torques on the motor to produce the forces necessary to command the quadcopter as we choose.
+
+\begin{equation}
+Q_{i}=\overrightarrow{F}_{R}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{i}}+\overrightarrow{M}_{G}\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{j}}}, i=1:6, j=4:6
+\end{equation}
+%------------------------------------------------
+
+\section{Methods}
+
+The tracked states of the system are represented as:
+\begin{equation}
+x=[\begin{array}{cccccc}
+X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]
+\end{equation}
+where $X_{G},Y_{G},Z_{G}$ are the global position of the quadcopter center of mass, and $\psi,\theta,\phi$ are the Euler angles of each axis.
+
+Text requiring further explanation\footnote{Example footnote}.
+
+%------------------------------------------------
+
+\section{Results}
+
+%------------------------------------------------
+
+\section{Discussion}
+
+\subsection{Subsection One}
+
+A statement requiring citation \cite{Figueredo:2009dg}.
+
+\subsection{Subsection Two}
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+
+\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
+
+\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
+Figueredo, A.~J. and Wolf, P. S.~A. (2009).
+\newblock Assortative pairing and life history strategy - a cross-cultural
+  study.
+\newblock {\em Human Nature}, 20:317--330.
+ 
+\end{thebibliography}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
