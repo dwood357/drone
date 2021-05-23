@@ -1,4 +1,5 @@
-\documentclass[twoside,twocolumn]{article}
+% \documentclass[twoside,twocolumn]{article}
+\documentclass{article}
 
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
 
@@ -200,10 +201,112 @@ This definition leads to 6 equations of motions of the system.
 \end{split}
 \end{equation}
 
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{j}}})-\frac{\partial\mathcal{L}(q)}{\partial q_{j}}=Q_{j}(q) =\overrightarrow{F}_{R}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{i}}+\overrightarrow{M}_{G}\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{j}}}, i=1:6, j=4:6
+\end{equation}
+
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{1}}}) - \frac{\partial\mathcal{L}(q)}{\partial q_{1}}= (\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{1}}+(\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}))\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{1}}}
+\end{equation}
+
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{2}}}) - \frac{\partial\mathcal{L}(q)}{\partial q_{2}}= (\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{2}}+(\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}))\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{2}}}
+\end{equation}
+
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{3}}}) - \frac{\partial\mathcal{L}(q)}{\partial q_{3}}= (\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{3}}+(\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}))\frac{\partial\overrightarrow{\omega}}{\partial
+\dot{q_{3}}}
+\end{equation}
+
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{4}}}) - \frac{\partial\mathcal{L}(q)}{\partial q_{4}}= (\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{4}}+(\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}))\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{4}}}
+\end{equation}
+
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{5}}})- \frac{\partial\mathcal{L}(q)}{\partial q_{5}}= (\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{5}}+(\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}))\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{5}}}
+\end{equation}
+
+\begin{equation}
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{6}}}) - \frac{\partial\mathcal{L}(q)}{\partial q_{6}}= (\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{6}}+(\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}))\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{6}}}
+\end{equation}
+
+\begin{equation}
+(\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{1}} =\left[\begin{array}{c} 0 \\ 0 \\ F_{1} + F_{2} + F_{3} + F_{4} -mg\end{array}\right]\left[\begin{array}{c} 1 \\ 0 \\ 0\end{array}\right] = 0
+\end{equation}
+
+\begin{equation}
+(\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{2}} =\left[\begin{array}{c} 0 \\ 0 \\ F_{1} + F_{2} + F_{3} + F_{4} -mg\end{array}\right]\left[\begin{array}{c} 0 \\ 1 \\ 0\end{array}\right] = 0
+\end{equation}
+
+\begin{equation}
+(\sum_{i=1}^{4}F_{i} - mg)\frac{\partial\overrightarrow{r_{G}}}{\partial q_{3}} =\left[\begin{array}{c} 0 \\ 0 \\ F_{1} + F_{2} + F_{3} + F_{4} -mg\end{array}\right]\left[\begin{array}{c} 0 \\ 0 \\ 1\end{array}\right] = F_{1} + F_{2} + F_{3} + F_{4} -mg
+\end{equation}
+
+% Assuming the x axis lies along the structure towards F1, and y axis lies along the structure towards F4. As shown in the drone_diag. Also assuming that the length from G to each force is symmetric, shown as l.
+
+\begin{equation}
+\overrightarrow{r_1} = \left[\begin{array}{c} l \\ 0 \\ 0\end{array}\right],
+\overrightarrow{r_2} = \left[\begin{array}{c} 0 \\ -l \\ 0\end{array}\right],
+\overrightarrow{r_3} = \left[\begin{array}{c} -l \\ 0 \\ 0\end{array}\right],
+\overrightarrow{r_4} = \left[\begin{array}{c} 0 \\ l \\ 0\end{array}\right]
+\end{equation}
+
+\begin{equation}
+\overrightarrow{F_1} = \left[\begin{array}{c} 0 \\ 0 \\ F_1 \end{array}\right],
+\overrightarrow{F_2} = \left[\begin{array}{c} 0 \\ 0 \\ F_2 \end{array}\right],
+\overrightarrow{F_3} = \left[\begin{array}{c} 0 \\ 0 \\ F_3 \end{array}\right],
+\overrightarrow{F_4} = \left[\begin{array}{c} 0 \\ 0 \\ F_4 \end{array}\right]
+\end{equation}
+
+\begin{equation}
+\overrightarrow{r_1} X \overrightarrow{F_1} = \left[\begin{array}{c} 0 \\ -F_1 l \\ 0 \end{array}\right],
+\overrightarrow{r_2} X \overrightarrow{F_2} = \left[\begin{array}{c} -F_2 l \\ 0 \\ 0 \end{array}\right],
+\overrightarrow{r_3} X \overrightarrow{F_3} = \left[\begin{array}{c} 0 \\ F_3 l \\ 0 \end{array}\right],
+\overrightarrow{r_4} X \overrightarrow{F_4} = \left[\begin{array}{c} F_4 l \\ 0 \\ 0 \end{array}\right]
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) =
+\left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]
+\end{equation}
+
+\begin{equation}
+\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{1}}} = 0, \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{2}}} = 0, \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{3}}} = 0 
+\end{equation}
+
+\begin{equation}
+\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{4}}} = \left[\begin{array}{c} -\sin{\theta} \\ \cos{\theta}\sin{\psi} \\ \cos{\theta}\cos{\psi} \end{array}\right],
+\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{5}}} = \left[\begin{array}{c} 0 \\ \cos{\psi} \\ \sin{\psi} \end{array}\right],
+\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{6}}} = \left[\begin{array}{c} 1 \\ 0 \\ 0\end{array}\right]
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{4}}} =
+\left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]^{T} \left[\begin{array}{c} -\sin{\theta} \\ \cos{\theta}\sin{\psi} \\ \cos{\theta}\cos{\psi} \end{array}\right]
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{5}}} =
+\left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]^{T} \left[\begin{array}{c} 0 \\ \cos{\psi} \\ \sin{\psi} \end{array}\right]
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{6}}} =
+\left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]^{T} \left[\begin{array}{c} 1 \\ 0 \\ 0\end{array}\right]
+\end{equation}
+
+
+the inputs to the system u, is an array of the forces:
+
+\begin{equation}
+u = [\begin{array}{cccc}
+F_1 & F_2 & F_3 & F_4\end{array}]
+\end{equation}
+
 Using seperation techniques we can now define the state space as:
 
 \begin{equation}
-\dot{x} = F(x) + G(x)Q
+\dot{x} = F(x) + G(x)u
 \end{equation}
 
 

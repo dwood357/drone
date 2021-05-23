@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex SlidingModeControl"] 1619581590 "SlidingModeControl.aux" "SlidingModeControl.bbl" "SlidingModeControl" 1619581592
+["bibtex SlidingModeControl"] 1619614959 "SlidingModeControl.aux" "SlidingModeControl.bbl" "SlidingModeControl" 1619614960
   "/usr/local/texlive/2019/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
   "References.bib" 0 -1 0 ""
-  "SlidingModeControl.aux" 1619581591 1546 6520d9c84c69a73a8d3647843f7672e5 "pdflatex"
+  "SlidingModeControl.aux" 1619614960 1546 008988874fb83b02ea61b5fcb9832d03 "pdflatex"
   (generated)
   "SlidingModeControl.bbl"
   "SlidingModeControl.blg"
-["pdflatex"] 1619581590 "SlidingModeControl.tex" "SlidingModeControl.pdf" "SlidingModeControl" 1619581592
+["pdflatex"] 1619614959 "SlidingModeControl.tex" "SlidingModeControl.pdf" "SlidingModeControl" 1619614960
   "/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2019/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2019/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1136768653 1408 5937f58aa508ea2cea4901c07d10f5fe ""
@@ -120,13 +120,13 @@
   "/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1557342064 3277517 23507ed665b4dd9046f0f2a94bbef2be ""
   "/usr/local/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1557342086 4259635 562fc36ec496993777a6c428d8bfb811 ""
   "/usr/local/texlive/2019/texmf.cnf" 1557341546 577 d150fef99ac436ad1156e86b0892f6ef ""
-  "SlidingModeControl.aux" 1619581591 1546 6520d9c84c69a73a8d3647843f7672e5 "pdflatex"
+  "SlidingModeControl.aux" 1619614960 1546 008988874fb83b02ea61b5fcb9832d03 "pdflatex"
   "SlidingModeControl.bbl" 0 -1 0 "bibtex SlidingModeControl"
-  "SlidingModeControl.out" 1619581591 302 b80d3e5e100053b48e7649ed8176694e "pdflatex"
-  "SlidingModeControl.tex" 1619581588 10946 ab21eb6f1ebeb5608ca50a6aa2f49bd6 ""
+  "SlidingModeControl.out" 1619614960 302 b80d3e5e100053b48e7649ed8176694e "pdflatex"
+  "SlidingModeControl.tex" 1619614957 17554 6ee877993b3e0064ff000b62815cc046 ""
   "drone_diag.png" 1619380722 36045 a6515bd04868bfe80687691209b8ef73 ""
   (generated)
-  "SlidingModeControl.aux"
   "SlidingModeControl.out"
-  "SlidingModeControl.log"
   "SlidingModeControl.pdf"
+  "SlidingModeControl.aux"
+  "SlidingModeControl.log"
