@@ -1,0 +1,525 @@
+\documentclass[12pt, letterpaper]{article}
+%\documentclass[12pt]{article}
+\usepackage{times,amssymb,subfigure, amsmath,epsfig,graphicx}
+\usepackage{wrapfig}
+\usepackage[final]{pdfpages}
+\usepackage[margin=0.9in]{geometry}
+%usepackage{amsmath}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{amsmath}
+%\usepackage[margin=0.5in]{geometry}
+\setcounter{MaxMatrixCols}{12}
+\begin{document}
+\title{Sliding Mode Control of a Quad-Copter for Autonomous Trajectory Tracking}
+\author{Daniel Wood and Majura F. Selekwa}
+\maketitle
+\section*{Abstract} Unmanned air vehicles or drones have become ubiquitous in our daily lives; they are deployed in performing many tasks from dangerous military missions to simple recreation activities. One air vehicle that has become very popular is the quad-copter driven by four vertical and parallel propellers. Today quad-copters are deployed in many video recording and remote monitoring almost everywhere in the world. One area of interest for quad-copters has been in farming operations; these vehicles are used in farming operations for not only aerial monitoring of soil nitrogen levels but many other farm monitoring operations. One common aspect of most quad-copters is that they are teleoperated by the user, i.e., most of them are not yet fully autonomous. There must be a remote pilot who is connected to the quad-copter by a video link so that he/she can control the maneuver of the vehicle along the intended path. This paper intends to show that a quad-copter can be programmed to run autonomously along a predetermined trajectory by using sliding mode control strategy. Since trajectories in most farms are clearly well known in advance, then they can be programmed into the controller for the quad-copter to autonomously track. The design process involves using the intended trajectory to define the 3-D sliding surface and then letting the quad-copter controller switch about that surface while keeping the vehicle in the target trajectory. The workspace is defined as a 3-D space where the sliding surface is defined by fitting weighted spline functions on the coordinates of the intended trajectory to define the stable sliding surface whose stability lever increases as the vehicle moves towards the target point. Preliminary results compare the trajectories followed by the quad-copter and the intended trajectories by using the mean square deviation. As would be expected, the performance depends heavily on the speed of the quad-copter; higher speeds on sharp curvature are associated with large tracking errors than low speeds on similar curvatures, while the performance on straight line paths was considerably good. This is  most likely due to the switching speed because it seems that higher speeds should be associated with higher switching speeds also. The future work intends to study if parameterizing the 3-D splines using speed and time can improve the tracking performance where the switching rate will be made to be proportional to the number of spline functions that define the trajectory irrespective of the speed of the quad-copter.
+
+\section{Introduction}
+
+\section{Quadcopter Modelling}
+In order to properly define the dynamics of a quadcopter, two coordinate systems will be defined, body \& inertial coordinate systems. In the inertial frame the position will be defined by $X_{G}$, $Y_{G}$, $Z_{G}$ with angles of rotation in the body frame defined as $\psi$,$\theta$,$\phi$, which allows to define the generalized coordinates q:
+
+\[
+q=[\begin{array}{cccccc}
+X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]
+\]
+
+The vector defined from the origin of the inertial
+frame to the certain of the body is as follows:
+
+\[
+\overrightarrow{r_{G}}= \left[\begin{array}{c}
+X_{G}\\
+Y_{G}\\
+Z_{G}
+\end{array}\right]
+\]
+
+In the case of the quadcopter where there are four motors, there are
+four forces produced by the motors defined in the positive $\overrightarrow{k}$ direction
+of the body frame, in general the forces are defined as:
+
+\[
+\overrightarrow{F_{i}}=\left[\begin{array}{c}
+0\\
+0\\
+F_{i}
+\end{array}\right]i=1:4
+\]
+
+Which will yeild a resultant force in the body frame of:
+
+\[
+\overrightarrow{F_{R}}=\sum_{i=1}^{4}\overrightarrow{F_{i}}-mg
+\]
+
+These forces will also need to be defined in the inertial frame, this
+is acheived by the rotation matrix:
+
+\[
+\overrightarrow{F_{R}}=R(\psi,\theta,\phi)\cdot \overrightarrow{F_{R}}
+\]
+
+Where the rotation matrix is defined as:
+
+\[
+R(\psi,\theta,\phi)=\left[\begin{array}{ccc}
+cos\psi cos\theta & cos\theta sin\psi & -sin\theta\\
+cos\psi sin\phi sin\theta-cos\phi sin\psi & cos\phi cos\psi+sin\phi sin\psi sin\theta & cos\theta sin\phi\\
+sin\phi sin\psi+cos\phi cos\psi sin\theta & cos\phi sin\psi sin\theta-cos\psi sin\phi & cos\phi cos\theta
+\end{array}\right]
+\]
+
+Which can be expressed in terms of the generalized coordinates q as:
+
+\[
+R(q)=\left[\begin{array}{ccc}
+\cos(q_{4})\cos(q_{5}) & \cos(q_{5})\sin(q_{4}) & \-sin(q_{5})\\
+\cos(q_{4})\sin(q_{6})\sin(q_{5})\-cos(q_{6})\sin(q_{4}) & \cos(q_{6})\cos(q_{4})+\sin(q_{6})\sin(q_{4})\sin(q_{5}) & \cos(q_{5})\sin(q_{6})\\
+\sin(q_{6})\sin(q_{4})+\cos(q_{6})\cos(q_{4})\sin(q_{5}) & \cos(q_{6})\sin(q_{4})\sin(q_{5})-\cos(q_{4})\sin(q_{6}) & \cos(q_{6})\cos(q_{5})
+\end{array}\right]
+\]
+
+which yields the force resultant in the inertial frame as:
+
+\[
+\overrightarrow{F_{R}}(q)=\left[\begin{array}{c}
+-sin(q_{5})\cdot(F_{1}+F_{2}+F_{3}+F_{4}-mg)\\
+cos(q_{5})\sin(q_{6})\cdot(F_{1}+F_{2}+F_{3}+F_{4}-mg)\\
+cos(q_{6})\cos(q_{5})\cdot(F_{1}+F_{2}+F_{3}+F_{4}-mg)
+\end{array}\right]
+\]
+
+The position of the forces in the body frame are defined by the position
+vectors $\overrightarrow{r_{i}}$ (i=1:4) as follows:
+\[
+\overrightarrow{r_{1}}=\frac{a}{2}\overrightarrow{i}+\frac{b}{2}\overrightarrow{j}+0\overrightarrow{k}
+\]
+
+\[
+\overrightarrow{r_{2}}=-\frac{a}{2}\overrightarrow{i}+\frac{b}{2}\overrightarrow{j}+0\overrightarrow{k}
+\]
+
+\[
+\overrightarrow{r_{3}}=\frac{a}{2}\overrightarrow{i}-\frac{b}{2}\overrightarrow{j}+0\overrightarrow{k}
+\]
+
+\[
+\overrightarrow{r_{4}}=-\frac{a}{2}\overrightarrow{i}-\frac{b}{2}\overrightarrow{j}+0\overrightarrow{k}
+\]
+
+Using the forces and their position vectors the moment about origin
+G in the body frame is defined as:
+
+\[
+\overrightarrow{M_{G}}=\sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}})
+\]
+
+this will also need to be rotated into the inertial frame yielding:
+
+\[
+\overrightarrow{M_{G}}=\left[\begin{array}{c}
+cosq_{4}cosq_{5}M_{1}+cosq_{5}sinq_{4}M_{2}\\
+-(cosq_{6}sinq_{4}-cosq_{4}sinq_{6}sinq_{5})M_{1}+(cosq_{6}cosq_{4}+sinq_{6}sinq_{4}sinq_{5})M_{2}\\
+(sinq_{6}sinq_{4}+cosq_{6}cosq_{4}sinq_{5})M_{1}-(cosq_{4}sinq_{6}-cosq_{6}sinq_{4}sinq_{5})M_{2}
+\end{array}\right]
+\]
+
+\[
+M_{1}=\frac{b}{2}F_{1}+\frac{b}{2}F_{2}-\frac{b}{2}F_{3}-\frac{b}{2}F_{4}
+\]
+
+\[
+M_{2}=\frac{a}{2}F_{1}-\frac{a}{2}F_{2}+\frac{a}{2}F_{3}-\frac{a}{2}F_{4}
+\]
+
+For a full depiction of the dynamics of the system in the global frame
+first we start with looking at the local angular velocities as expressed
+in the body frame:
+
+\[
+\omega_{body}=\left[\begin{array}{c}
+\omega_{x}\\
+\omega_{y}\\
+\omega_{z}
+\end{array}\right]=\left[\begin{array}{ccc}
+-sin\theta & 0 & 1\\
+cos\theta cos\phi & cos\phi & 0\\
+cos\phi cos\theta & -sin\phi & 0
+\end{array}\right]\left[\begin{array}{c}
+\dot{\psi}\\
+\dot{\theta}\\
+\dot{\phi}
+\end{array}\right]
+\]
+
+Expressing these in the generalized coordinates of q yields:
+
+\[
+\omega(q)=R(q)\cdot\omega_{body}
+\]
+
+With the local angular velocities and the moments in the body frame
+rotated into the inertial, the generalized forces $Q_{i}$ can
+be defined by:
+
+\[
+Q_{i}=\overrightarrow{F}_{R}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{i}}+\overrightarrow{M}_{G}\frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{j}}}, i=1:6, j=4:6
+\]
+
+% This allows for a full generalized force representation as:
+
+% \[
+% Q_{1}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{1}}
+% \]
+
+% \[
+% Q_{2}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{2}}
+% \]
+
+% \[
+% Q_{3}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{3}}
+% \]
+
+% \[
+% Q_{4}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{4}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{4}}}
+% \]
+
+% \[
+% Q_{5}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{5}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{5}}}
+% \]
+
+% \[
+% Q_{6}=\overrightarrow{F_{R}}\frac{\partial\overrightarrow{r_{G}}}{\partial q_{6}}+\overrightarrow{M_{G}}\frac{\partial\omega}{\partial\dot{q_{6}}}
+% \]
+
+
+\subsection*{The Kinetic Energy and the Equations of Motion}
+
+The kinetic energy of the quadcopter is defined as:
+
+\[
+T(q)=\frac{1}{2}\dot{q}^{T}M(q)\dot{q}
+\]
+
+where M(q) is defined as:
+
+\[
+M(q)=J_{v}(q)^{T}m_{rr}J_{v}(q)+J_{w}(q)^{T}m_{\theta\theta}J_{w}(q)
+\]
+
+with:
+
+\[
+J_{v}(q)=\left[\begin{array}{cccccc}
+\frac{\partial q_{1}}{\partial q_{1}} & \frac{\partial q_{1}}{\partial q_{2}} & \frac{\partial q_{1}}{\partial q_{3}} & 0 & 0 & 0\\
+\frac{\partial q_{2}}{\partial q_{1}} & \frac{\partial q_{2}}{\partial q_{2}} & \frac{\partial q_{2}}{\partial q_{3}} & 0 & 0 & 0\\
+\frac{\partial q_{3}}{\partial q_{1}} & \frac{\partial q_{3}}{\partial q_{1}} & \frac{\partial q_{3}}{\partial q_{1}} & 0 & 0 & 0
+\end{array}\right]
+\]
+
+\[
+J_{w}(q)=\left[\begin{array}{cccccc}
+0 & 0 & 0 & -sinq_{5} & 0 & 1\\
+0 & 0 & 0 & cosq_{5}sinq_{6} & cosq_{6} & 0\\
+0 & 0 & 0 & cosq_{5}cosq_{6} & -sinq_{6} & 0
+\end{array}\right]
+\]
+
+\[
+m_{rr}=\left[\begin{array}{ccc}
+m & 0 & 0\\
+0 & m & 0\\
+0 & 0 & m
+\end{array}\right]
+\]
+
+\[
+m_{\theta\theta}=\left[\begin{array}{ccc}
+I_{xx} & 0 & 0\\
+0 & I_{yy} & 0\\
+0 & 0 & I_{zz}
+\end{array}\right]
+\]
+
+which expands to:
+
+\[
+T(q)=\frac{1}{2}(m\dot{q_{1}}^{2}+m\dot{q_{2}}^{2}+m\dot{q_{3}}^{2}+\dot{q_{4}}^{2}((I_{yy}+I_{zz})cos(q_{5})^{2}cos(q_{6})^{2}+I_{xx}sin(q_{5})^{2})+\ldots
+\]
+
+\[
+\ldots+\dot{q_{5}}^{2}(I_{yy}cos(q_{6})^{2}+I_{zz}sin(q_{6})^{2})+2\dot{q_{5}}\dot{q_{4}}\sigma+\dot{q_{6}}^{2}I_{xx}-2\dot{q_{6}}\dot{q_{4}}I_{xx}sin(q_{5}))
+\]
+
+where:
+
+\[
+\sigma=\frac{1}{2}(I_{yy}-I_{zz}){cos}(q_{5}){sin}(2q_{6})
+\]
+
+The potential energy of the drone is defined as:
+
+\[
+\overrightarrow{V}(q)=mgq_{3}
+\]
+
+which allows for the lagrangian to be:
+
+\[
+\mathcal{L}(q)=T(q)-V(q)
+\]
+
+yielding,
+
+\[
+\mathcal{L}(q) = \frac{1}{2} m \dot{q}_{1}^{2} + \frac{1}{2} m \dot{q}_{2}^{2} + \frac{1}{2} m \dot{q}_{3}^{2} + 
+\]
+\[
+\ldots(\frac{1}{2} I_{xx} {sin}^{2}(q_{5}) + \frac{1}{2} I_{yy} {cos}^{2}(q_{6}) - (\frac{1}{2} I_{yy} - \frac{1}{2} I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2} + 
+\]
+\[
+\dots(\frac{1}{2} I_{zz} + \frac{1}{2} (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \dot{q}_{5}^{2} + \frac{1}{2} I_{xx} \dot{q}_{6}^{2} - I_{xx} {sin}(q_{5}) \dot{q}_{4} \dot{q}_{6} 
+\]
+\[
+\ldots+ \frac{1}{2}(I_{yy} + I_{zz}) {cos}(q_{5}){sin}(2q_{6}) \dot{q}_{4} \dot{q}_{5}+ g m q_{3}
+\]
+
+with $\mathcal{L}(q)$ defined this allows us to find the corresponding
+Euler-Lagrange equations of motions from the following equation:
+
+\[
+\frac{d}{dt}(\frac{\partial\mathcal{L}(q)}{\partial\dot{q_{j}}})-\frac{\partial\mathcal{L}(q)}{\partial q_{j}}=Q_{j}(q)
+\]
+
+\[
+% m \ddot{q}_{1}
+Q_{1}(q)=m\ddot{q_{1}}
+\]
+
+\[
+Q_{2}(q)=m\ddot{q_{2}}
+\]
+
+\[
+Q_{3}(q)=m\ddot{q_{3}}-mg
+\]
+
+\[
+Q_{4}(q) = - I_{xx} {sin}(q_{5}) \ddot{q}_{6} + (- I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} + 
+\]
+\[
+\ldots2 (I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) \ddot{q}_{4} +
+\]
+\[ 
+\ldots(I_{yy} + I_{zz}) {cos}(q_{5}) {sin}(2q_{6}) \ddot{q}_{5}
+\]
+
+\[
+Q_{5}(q) =(I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2} + (I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} + 
+\]
+\[
+\ldots(I_{yy} + I_{zz}) {cos}(q_{5}) {sin}(2q_{6}) \ddot{q}_{4} - (2 I_{yy} - 2 I_{zz}) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5} \dot{q}_{6} + (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) \ddot{q}_{5}
+\]
+
+\[
+Q_{6}(q)= - I_{xx} {sin}(q_{5}) \ddot{q}_{4} + I_{xx} \ddot{q}_{6} - (I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + 
+\]
+\[
+\ldots(I_{yy} - I_{zz}) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{5}^{2} - (I_{yy} + (I_{yy} - I_{zz}) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4}^{2}
+\]
+
+
+\subsection*{State Space Representation}
+To define a controller, the dynamics of the system must be first put into state space form:
+\[
+x = [q,\dot{q}]^T
+\]
+and,
+\[
+\dot{x} = [\frac{dq}{dt},\frac{d\dot{q}}{dt}]^T
+\]
+where,
+\[\frac{d\dot{q_{1}}}{dt} = \frac{Q_{1}}{m}
+\]
+
+\[\frac{d\dot{q_{2}}}{dt} = \frac{Q_{2}}{m}
+\]
+
+\[\frac{d\dot{q_{3}}}{dt} = g + \frac{Q_{3}}{m}
+\]
+
+\[
+\frac{d\dot{q_{4}}}{dt} = 
+\frac{A_{1}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+where:
+
+\[
+A_{1} = -(I_{yy} + I_{zz})((I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(q_{5}) {cos}(q_{6}) \dot{q}_{4}^{2} +
+\]
+\[
+\ldots(I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{6} +
+\]
+\[ 
+\ldots(- I_{yy} + I_{zz}) {sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} - Q_{5}){sin}(2 q_{6}) {cos}(q_{5}) -
+\]
+\[ 
+\ldots(2 I_{zz} + 2 (I_{yy} - I_{zz}) {cos}^{2}(q_{6}))((- I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} + 
+\]
+\[
+(I_{xx} + (I_{yy} - I_{zz}) {cos}^{2}(q_{5})) {sin}(q_{6}) {cos}(q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(q_{5}) -
+\]
+\[ 
+\ldots(2 I_{zz} + 2 (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) ((I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} + (- 0.5 I_{yy} + 0.5 I_{zz}) {sin}(2 q_{6}) \dot{q}_{5}^{2} + 
+\]
+\[
+(- 0.125 I_{yy} + 0.125 I_{zz}) {sin}(2 q_{5} - 2 q_{6}) + (0.125 I_{yy} - 0.125 I_{zz}) {sin}(2 q_{5} + 2 q_{6}) + (1.5 I_{yy} - 0.5 I_{zz}) {sin}(q_{5}) {cos}(q_{5}) \dot{q}_{4}^{2})
+\]
+
+\[
+\frac{d\dot{q_{5}}}{dt} = \frac{A_{2}}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+where,
+
+\[A_{2} =(0.5 I_{yy} + 0.5 I_{zz}) ((- 0.5 I_{yy} + 0.5 I_{zz}) {sin}(2 q_{6}) \dot{q}_{5}^{2} + (I_{xx} {cos}(q_{5}) + (0.5 I_{yy} + 0.5 I_{zz}) {cos}(q_{5}) {cos}(2 q_{6})) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots((- 0.125 I_{yy} + 0.125 I_{zz}) {sin}(2 q_{5} - 2 q_{6}) + (0.125 I_{yy} - 0.125 I_{zz}) {sin}(2 q_{5} + 2 q_{6}) +
+\]
+\[
+\ldots(0.75 I_{yy} - 0.25 I_{zz}) {sin}(2 q_{6})) \dot{q}_{4}^{2} + Q_{6}) {sin}(2 q_{5}) {sin}(2 q_{6}) + (I_{yy} + I_{zz}) ((- I_{xx} + (- I_{yy} + I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots(I_{xx} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5})) {sin}(2 q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(2 q_{6}) {cos}(q_{5}) -
+\]
+\[
+\ldots(2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6})) ((0.5 I_{xx} + (0.5 I_{yy} - 0.5 I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4}^{2} +
+\]
+\[
+\ldots(- I_{yy} + I_{zz}) {sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} + (I_{xx} {cos}(q_{5}) + (I_{yy} + I_{zz}) {cos}(q_{5}) {cos}(2 q_{6})) \dot{q}_{4} \dot{q}_{6} - Q_{6})
+\]
+
+\[
+\frac{d\dot{q_{6}}}{dt} =
+\frac{A_{3}}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
+\]
+where,
+
+\[
+A_{3} = - 0.25 I_{xx} (I_{yy} + I_{zz})((- I_{yy} + I_{zz}){sin}(2 q_{6}) \dot{q}_{5} \dot{q}_{6} + (0.5 I_{xx} {sin}(2 q_{5}) + (I_{yy} - I_{zz}) {sin}(q_{5}) {cos}(q_{5}) {cos}^{2}(q_{6})) \dot{q}_{4}^{2}+
+\]
+\[
+\ldots(I_{xx} {cos}(q_{5}) + (I_{yy} + I_{zz}) {cos}(q_{5}) {cos}(2 q_{6})) \dot{q}_{4} \dot{q}_{6} - Q_{5}) {sin}(2 q_{5}) {sin}(2 q_{6}) - 
+\]
+\[
+\ldots2 I_{xx} (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) ((- 0.5 I_{xx} + (- I_{yy} + I_{zz}) {cos}^{2}(q_{6})) {sin}(2 q_{5}) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots(I_{xx} + (- 0.5 I_{yy} + 0.5 I_{zz}) {cos}^{2}(q_{5})) {sin}(2 q_{6}) \dot{q}_{4} \dot{q}_{6} + Q_{4}) {sin}(q_{5}) +
+\]
+\[
+\ldots((I_{yy} - I_{zz}) (I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) + 2 (I_{yy} + I_{zz})^{2} {sin}(q_{6})) ((I_{xx} + (I_{yy} + I_{zz}) {cos}(2 q_{6})) {cos}(q_{5}) \dot{q}_{4} \dot{q}_{5} +
+\]
+\[
+\ldots(- 0.5 I_{yy} + 0.5 I_{zz}) {sin}(2 q_{6}) \dot{q}_{5}^{2} + ((- 0.25 I_{yy} + 0.25 I_{zz}) {sin}(2 q_{5} - 2 q_{6}) + (0.25 I_{yy} + 0.25 I_{zz}) {sin}(2 q_{5} + 2 q_{6}) +
+\]
+\[
+\ldots(0.75 I_{yy} - 0.25 I_{zz}) {sin}(2 q_{6})) \dot{q}_{4}^{2} + Q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) 
+\]
+
+To control the dynamics of the system the state space needs to be written in the following form:
+
+\[
+\dot{x} = F(q,\dot{q}) + G(q,\dot{q}) Q
+\]
+
+where $G(q,\dot{q})$ is a function of the states, and the generalized forces $Q_{1x12}$ are the system inputs.
+
+\[
+G(q,\dot{q}) = \begin{bmatrix}
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&0&0&0&\frac{1}{m}&0&0&0&0&0\\
+0&0&0&0&0&0&0&\frac{1}{m}&0&0&0&0\\
+0&0&0&0&0&0&0&0&\frac{1}{m}&0&0&0\\
+0&0&0&0&0&0&0&0&0&g_{1010}&g_{1011}&g_{1012}\\
+0&0&0&0&0&0&0&0&0&g_{1110}&g_{1111}&g_{1112}\\
+0&0&0&0&0&0&0&0&0&g_{1210}&g_{1211}&g_{1212}\\
+\end{bmatrix},
+Q = \left[\begin{array}{c}
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+Q_{1}\\
+Q_{2}\\
+Q_{3}\\
+Q_{4}\\
+Q_{5}\\
+Q_{6}\\
+\end{array}\right]
+\]
+
+where,
+\[
+g_{1010} = \frac{(I_{yy}-I_{zz})cos{q_{6}}^2 + I_{zz}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+
+\[
+g_{1011} = \frac{(I_{yy}+I_{zz})cos{q_{5}}sin{2q_{6}}}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+
+\[
+g_{1012} = \frac{2sin{q_{5}}((I_{yy}-I_{zz})cos{q_{6}}^2 + I_{zz})}{(I_{zz} + (I_{yy} - I_{zz}) {cos}^{2}(q_{6})) (2 I_{xx} {sin}^{2}(q_{5}) + (I_{yy} - I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}
+\]
+
+\[
+g_{1110} = \frac{(I_{yy}+I_{zz})cos(q_{5})sin(2q_{6})}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+
+\[
+g_{1111} = \frac{2I_{xx}{sin}^2(q_{5})+(I_{yy}-I_{zz}){cos}^2(q_{5}){cos}^2(q_{6})}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+
+\[
+g_{1112} = \frac{\frac{1}{2}(I_{yy}+I_{zz}){sin}(2q_{5}){sin}(2q_{6})}
+{2I_{xx}{sin}^2(q_{5})(I_{yy}{cos}^2(q_{6})+I_{zz}{sin}^2(q_{6}))+{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}^2({sin}^2(q_{6})+1)+I_{yy}I_{zz}(6 {sin}^2(q_{6})-1))+I_{zz}^2{sin}^2(q_{6})}
+\]
+
+\[
+g_{1210} = \frac{2{sin}(q_{5})((I_{yy}-I_{zz}){cos}^2(q_{6})+I_{zz})}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
+\]
+
+\[
+g_{1211} = \frac{\frac{1}{2}(I_{yy}+I_{zz}){sin}(2q_{5}){sin}(2q_{6})}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
+\]
+
+\[
+g_{1212} = \frac{(I_{yy}-I_{zz})^2{cos}^2(q_{5}){cos}^4(q_{6}) + 2(I_{yy}+I_{zz})^2{sin}^2(q_{6}){cos}^2(q_{5}){cos}^2(q_{6})+I_{zz}{cos}^2(q_{5}){cos}^2(q_{6})(I_{yy}-I_{zz})}
+{\splitfrac{I_{xx}( 2 I_{xx} ((I_{yy}-I_{zz}) {cos}^{2}(q_{6}) + I_{zz}) {sin}^{2}(q_{5}) + 
+(I_{yy} - I_{zz}) ((I_{yy}-I_{zz}) {cos}^{2}(q_{6})}
+{ + I_{zz}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}) + 2 (I_{yy} + I_{zz})^{2} {sin}^{2}(q_{6}) {cos}^{2}(q_{5}) {cos}^{2}(q_{6}))}}
+\]
+\end{document}
+

@@ -283,16 +283,19 @@ This definition leads to 6 equations of motions of the system.
 \begin{equation}
 \sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{4}}} =
 \left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]^{T} \left[\begin{array}{c} -\sin{\theta} \\ \cos{\theta}\sin{\psi} \\ \cos{\theta}\cos{\psi} \end{array}\right]
+= -(F_4 l -F_2 l)\sin{\theta} + (F_3 l - F_1 l) \cos{\theta}\sin{\psi}
 \end{equation}
 
 \begin{equation}
 \sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{5}}} =
 \left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]^{T} \left[\begin{array}{c} 0 \\ \cos{\psi} \\ \sin{\psi} \end{array}\right]
+= (F_3 l - F_1 l)\cos{\psi}
 \end{equation}
 
 \begin{equation}
 \sum_{i=1}^{4}(\overrightarrow{r_{i}}\times\overrightarrow{F_{i}}) \frac{\partial\overrightarrow{\omega}}{\partial\dot{q_{6}}} =
 \left[\begin{array}{c} F_4 l -F_2 l \\ F_3 l - F_1 l \\ 0\end{array}\right]^{T} \left[\begin{array}{c} 1 \\ 0 \\ 0\end{array}\right]
+= F_4 l -F_2 l
 \end{equation}
 
 

@@ -7,6 +7,35 @@ https://nbviewer.jupyter.org/github/plusk01/nonlinearquad/blob/master/sliding_mo
 
 np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
 
+def dynamics():
+    f = np.array([[X7],
+                [X8],
+                [X9],
+                [X10],
+                [X11],
+                [X12],
+                [((Ix-Iz)/Iz)*(dq5**2)*np.cos(q5) + 
+                ((Ix - Iy + Iz)/Iz)*dq4*dq5*np.cos(q5)*np.sin(q5) + 
+                ((Ix - Iy + Iz)/Iz)*dq5*dq6*np.cos(q5) + 
+                ((2*(Ix**2) + Iz**2 - 3*Ix*Iz)/(Ix*Iz))],
+                [0],
+                [0],
+                [0],
+                dq4*dq6*np.cos(q5),
+                [0]])
+
+    g = np.array([[0,0,0,0],
+                [0,0,0,0],
+                [0,0,0,0]
+                [0,0,0,0]
+                [0,0,0,0],
+                [0,0,0,0],
+                [g1, g1, g1, g1],
+                [g2, g2, g2, g2],
+                [g3, g3, g3, g3],
+                [-(a/Ix)*np.sin(q5)*np.cos(q6), 0, (a/Ix)*np.sin(q5)*np.cos(q6), 0],
+                [0, (a/Iq)*np.cos(q6), 0, -(a/Iq)*np.cos(q6)]])
+
 def sat(v):
     v = np.copy(v)
     v[np.abs(v) > 1] = np.sign(v[np.abs(v) > 1])
@@ -23,45 +52,14 @@ def rk4(f, y, dt):
     k4 = f(y + dt  *k3)
     return y + (dt/6)*(k1 + 2*k2 + 2*k3 + k4)
 
-def Rot_v_to_v1(psi):
-    R = np.array([
-        [ np.cos(psi), np.sin(psi), 0],
-        [-np.sin(psi), np.cos(psi), 0],
-        [     0,           0    ,   1]
-    ])
+def rotation(phi, theta, psi):
+
+    R = np.array([[np.cos(psi)*np.cos(theta), np.cos(theta)*np.sin(psi), -np.sin(theta)],
+        [np.cos(psi)*np.sin(phi)*np.sin(theta) - np.cos(phi)*np.sin(psi), 
+        np.cos(phi)*np.cos(psi) + np.sin(phi)*np.sin(psi)*np.sin(theta), np.cos(theta)*np.sin(phi)],
+        [np.sin(phi)*np.sin(psi) + np.cos(phi)*np.cos(psi)*np.sin(theta),
+        np.cos(phi)*np.sin(psi)*np.sin(theta) - np.cos(psi)*np.sin(phi), np.cos(phi)*np.cos(theta)]])
     return R
-
-def Rot_v1_to_v2(theta):
-    R = np.array([
-        [np.cos(theta), 0, -np.sin(theta)],
-        [      0      , 1,        0      ],
-        [np.sin(theta), 0,  np.cos(theta)]
-    ])
-    return R
-
-def Rot_v2_to_b(phi):
-    R = np.array([
-        [1,       0,           0     ],
-        [0,  np.cos(phi), np.sin(phi)],
-        [0, -np.sin(phi), np.cos(phi)]
-    ])
-    return R
-
-def Rot_v_to_b(phi, theta, psi):
-    return Rot_v2_to_b(phi).dot(Rot_v1_to_v2(theta).dot(Rot_v_to_v1(psi)))
-
-def Rot_i_to_b(phi, theta, psi):
-    return Rot_v_to_b(phi, theta, psi)
-
-# def rotation(phi, theta, psi):
-
-#     R = np.array([[np.cos(psi)*np.cos(theta), np.cos(theta)*np.sin(psi), -np.sin(theta)],
-#         [np.cos(psi)*np.sin(phi)*np.sin(theta) - np.cos(phi)*np.sin(psi), 
-#         np.cos(phi)*np.cos(psi) + np.sin(phi)*np.sin(psi)*np.sin(theta), np.cos(theta)*np.sin(phi)],
-#         [np.sin(phi)*np.sin(psi) + np.cos(phi)*np.cos(psi)*np.sin(theta),
-#         np.cos(phi)*np.sin(psi)*np.sin(theta) - np.cos(psi)*np.sin(phi), np.cos(phi)*np.cos(theta)]])
-#     print(R)
-#     return R
 
 class Controller(object):
     """Controller
@@ -96,7 +94,8 @@ class Estimator(object):
         """
         state = np.zeros((12,1))
         state[0:3] = quad.r
-        state[3:6] = Rot_i_to_b(*quad.Phi.flatten()).dot(quad.v) if self.body else quad.v
+        # state[3:6] = Rot_i_to_b(*quad.Phi.flatten()).dot(quad.v) if self.body else quad.v
+        state[3:6] = rotation(*quad.Phi.flatten()).dot(quad.v) if self.body else quad.v
         state[6:9] = quad.Phi
         state[9:12] = quad.omega
         return state
@@ -521,10 +520,14 @@ class Quadrotor(object):
         
         # Translational
 #         f = lambda v: (1/self.mass)*(self.Fg(ph,th) - T - np.cross(self.omega, v, axis=0)) # body
-        f = lambda v: (1/self.mass)*(self.Fg(0,0) - Rot_i_to_b(ph,th,ps).T.dot(T) - self.Mu.dot(v)) # inertial
-        # f = lambda v: (1/self.mass)*(self.Fg(0,0) - rotation(ph,th,ps).T.dot(T) - self.Mu.dot(v)) # inertial
+        # f = lambda v: (1/self.mass)*(self.Fg(0,0) - Rot_i_to_b(ph,th,ps).T.dot(T) - self.Mu.dot(v)) # inertial
+        f = lambda v: (1/self.mass)*(self.Fg(0,0) - rotation(ph,th,ps).T.dot(T) - self.Mu.dot(v)) # inertial
         self.v = rk4(f, self.v, dt)
-        
+        # print(np.array_equal(Rot_i_to_b(ph,th,ps),rotation(ph,th,ps)))
+        # print('\n')
+        # print(Rot_i_to_b(ph,th,ps))
+        # print('\n')
+        # print(rotation(ph,th,ps))
         # Rotational
         f = lambda omega: np.linalg.inv(self.I).dot((-np.cross(omega, self.I.dot(omega), axis=0) + M))
         self.omega = rk4(f, self.omega, dt)
@@ -810,6 +813,7 @@ if __name__ == "__main__":
 
     def set_position(i, Ts):
         f = 0.25
+        # x = np.sin(2*np.pi*f*i*Ts)
         x = np.cos(2*np.pi*f*i*Ts)
         return np.array([x, 2, -1])
 

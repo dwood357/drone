@@ -1,0 +1,319 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%% asme2e.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template for producing ASME-format articles using LaTeX            %
+% Written by   Harry H. Cheng                                        %
+%              Integration Engineering Laboratory                    %
+%              Department of Mechanical and Aeronautical Engineering %
+%              University of California                              %
+%              Davis, CA 95616                                       %
+%              Tel: (530) 752-5020 (office)                          %
+%                   (530) 752-1028 (lab)                             %
+%              Fax: (530) 752-4158                                   %
+%              Email: hhcheng@ucdavis.edu                            %
+%              WWW:   http://iel.ucdavis.edu/people/cheng.html       %
+%              May 7, 1994                                           %
+% Modified: February 16, 2001 by Harry H. Cheng                      %
+% Modified: January  01, 2003 by Geoffrey R. Shiflett                %
+% Use at your own risk, send complaints to /dev/null                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% use twocolumn and 10pt options with the asme2e format
+\documentclass[twocolumn,10pt]{asme2e}
+\special{papersize=8.5in,11in}
+\usepackage{graphicx,amsmath,amssymb,mathtools,color}
+
+%% The class has several options
+%  onecolumn/twocolumn - format for one or two columns per page
+%  10pt/11pt/12pt - use 10, 11, or 12 point font
+%  oneside/twoside - format for oneside/twosided printing
+%  final/draft - format for final/draft copy
+%  cleanfoot - take out copyright info in footer leave page number
+%  cleanhead - take out the conference banner on the title page
+%  titlepage/notitlepage - put in titlepage or leave out titlepage
+%  
+%% The default is oneside, onecolumn, 10pt, final
+
+%%% Replace here with information related to your conference
+\confshortname{IMECE 2021}
+\conffullname{the ASME 2021 International Mechanical Engineering Congress \& Exposition}
+
+%%%%% for date in a single month, use
+%\confdate{24-28}
+%\confmonth{September}
+%%%%% for date across two months, use
+\confdate{November 1-5}
+\confyear{2021}
+\confcity{Virtual Conference}
+\confcountry{Online}
+
+%%% Replace DETC2009/MESA-12345 with the number supplied to you 
+%%% by ASME for your paper.
+\papernum{IMECE2021-70691}
+
+%%% You need to remove 'DRAFT: ' in the title for the final submitted version.
+\title{DRAFT: Sliding Mode Control of a Quad-Copter for Autonomous Trajectory Tracking }
+%%% for the discussion section only
+%\usepackage{helvet}
+%\title{\fontfamily{phv}\selectfont{\Huge{DRAFT: AN ARTICLE CREATED USING \LaTeX2\raisebox{-.3ex}{$\epsilon$}\ IN ASME FORMAT}}}
+
+%%% first author
+\author{Daniel Wood
+	\affiliation{Mechatronics and Robotics Laboratory\\
+		Department of Mechanical aEngineering\\
+		North Dakota State University\\
+		Fargo, ND 58102\\
+		Email: daniel.wood@ndsu.edu
+	}	
+}
+
+%%% second author
+%%% remove the following entry for single author papers
+%%% add more entries for additional authors
+\author{Majura F. Selekwa\thanks{Address all correspondence to this author.} 
+	\affiliation{Mechatronics and Robotics Laboratory\\
+		Department of Mechanical aEngineering\\
+		North Dakota State University\\
+		Fargo, ND 58102\\
+		Email: majura.selekwa@ndsu.edu
+	}
+}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+	{\it  Unmanned air vehicles or drones have become ubiquitous in our daily lives; they are deployed in performing many tasks from dangerous military missions to simple recreation activities. One air vehicle that has become very popular is the quad-copter driven by four vertical and parallel propellers. Today quad-copters are deployed in many video recording and remote monitoring almost everywhere in the world. One area of interest for quad-copters has been in farming operations; these vehicles are used in farming operations for not only aerial monitoring of soil nitrogen levels but many other farm monitoring operations. One common aspect of most quad-copters is that they are teleoperated by the user, i.e., most of them are not yet fully autonomous. There must be a remote pilot who is connected to the quad-copter by a video link so that he/she can control the maneuver of the vehicle along the intended path. This paper intends to show that a quad-copter can be programmed to run autonomously along a predetermined trajectory by using sliding mode control strategy. Since trajectories in most farms are clearly well known in advance, then they can be programmed into the controller for the quad-copter to autonomously track. The design process involves using the intended trajectory to define the 3-D sliding surface and then letting the quad-copter controller switch about that surface while keeping the vehicle in the target trajectory. The workspace is defined as a 3-D space where the sliding surface is defined by fitting weighted spline functions on the coordinates of the intended trajectory to define the stable sliding surface whose stability lever increases as the vehicle moves towards the target point. Preliminary results compare the trajectories followed by the quad-copter and the intended trajectories by using the mean square deviation. As would be expected, the performance depends heavily on the speed of the quad-copter; higher speeds on sharp curvature are associated with large tracking errors than low speeds on similar curvatures, while the performance on straight line paths was considerably good. This is  most likely due to the switching speed because it seems that higher speeds should be associated with higher switching speeds also. The future work intends to study if parameterizing the 3-D splines using speed and time can improve the tracking performance where the switching rate will be made to be proportional to the number of spline functions that define the trajectory irrespective of the speed of the quad-copter.
+	}\end{abstract}
+
+\section{Introduction}
+{\color{blue}
+In recent years the development of smaller and cheaper electronics, specifically inertial measurement systems, has led to a rise in popularity of lightweight unmanned aerial vehicles. Unmanned aerial vehicles come in many configurations, some of the more common are quadrotors, octocopters as well as single engine. This work in particular will focus entirely on the quadrotor configuration. 
+
+The increase in general usage of quadrotor vehicles, has led to the need to autonomously control these vehicles, some applications include automated delivery services, military usage, aerial imagery. In recent years companies have begun implementing tethering features that allow quadrotors to autonomously follow a target. More sophisticated systems utilize autonomous path tracking. This path tracking is realized through a robust control scheme.
+
+The formation of autonomous control consists of a valid dynamical model of the vehicle, and a fast, stable, robust controller. The dynamics of a quadrotor is not trivial and requires concepts from advanced dynamics topics. There are many control algorithms to choose from, some that are currently being utilized. Picking a control algorithm stems from the goal of making the output stable as well as having a robust controller. A system is said to be stable if it can remain at an equilibrium point under the stress of external disturbances [cite something ehre], whereas robustness is defined as a controller that can operate under parameters that vary from the original design [ cite something here].
+
+There are many researchers dedicating time to improving controller stability through different control schemes such as Multiple Input Multiple Output state variable (MIMO) \cite{FarameeVeeravat2014EotS}, Linear Quadratic Regulator (LQR), Model Predictive Control (MPC), and Sliding Mode Control (SMC). In general this research focuses on nuances of the choosen algorithm with the goal of improvement in disturbance rejection\cite{DenisKotarski2016CDFU} and robustness. Because of the scope of the research, the dynamics model of the quadrotor is generally linearized for simplicity, or assumptions that were made lead to reduced order of the system\cite{FarameeVeeravat2014EotS}. Higher order dynamics that are missed when a model is linearized can contribute to errors in the control scheme. 
+
+The goal of this research is to start with the concrete fundamentals of dynamics to derive a state space model of the quadrotor in 3D space, relative to a fixed global frame. Then create a stable and robust non-linear controller for accurate path tracking. This controller will be based on the Sliding Mode Control (SMC) method, which is a specific type of variable structure system. This method is a valid choice for this dynamical system because it allows the controller to quickly jump to different equilibrium points, and forces state variables towards the equilibrium points, or in the case of SMC, the sliding manifold as it is noted in literature.
+
+Derivation of the equations of motion of the quadrotor requires defining two coordinate systems, the global, or fixed frame, and the body, or inertial frame\cite{FanniMohamed2017AN6Q},\cite{FarameeVeeravat2014EotS},\cite{HaomiaoHuang2009Aaco},\cite{DenisKotarski2016CDFU}. The path that is defined is always given in reference to the global frame, whereas the equations of motion that define our controllable states, is in reference to the body frame. Rotations of the body such as yaw, pitch, roll, are determined through sensors such as accelerometers and IMUs physically placed on the body. While physical position in space is defined by a global positioning system (GPS), which requires knowledge of the body as well as the reference frame.
+
+Sliding mode control is a technique that allows}
+
+\section*{QUADCOPTER MODELLING}
+\subsection*{The Dynamic Model}
+In order to control the quadcopter, its clear dynamic model is needed. The quadcopter model uses a mix of vehicle's body frame $(x,y,z) $ through which it reads its sensors, but its motion is controlled using the global inertial frame $(X,Y,Z)$, so the sensor readings of the quadcopter must always be translated by the controller back into these global coordinates. Currently, there are two dynamiv models that are popular among researchers on quadcopters: the most popular one is the  model of \cite{1013341}, which is a system of simplified Newton-Euler equations where the Newton equations are taken in the global frame, and the Euler equations are taken in the body frame using Euler rates. This model has been the most popular among quadcopter researchers as recently as \cite{lee2009feedback,mu2019learning,castillo2019disturbance}. The next model is that of \cite{bouabdallah2007design}, which also has been very popular among researchers, see for example \cite{mellinger2012trajectory,alexis2011switching,leishman2014quadrotors}. The model of  \cite{bouabdallah2007design} is based on Lagrangian formalism assuming that the cosines and sines of Euler angles for the rotation part of the motion are negligible except for the linear part of the motion. Both the models of \cite{1013341} and \cite{bouabdallah2007design} assume that the quadcopter measurements represent the state vector, i.e., the 3-D coordinates of the vehicle, the three Euler angles and their rates of change. There are some applications where this assumption is not realizable, even with quadcopters equipped with high precision GNSS device, because most onboard gyrometers can only measure angular velocities, not Euler rates.
+
+
+This section develops a model also using Lagrangian formalism but limits cases where the Euler angles can be ignored. On the rotary part of the motion, the model uses angular velocities of the vehicle, which can be measured by its gryometers instead of  the Euler rates.
+\begin{figure}[h]
+	\includegraphics[scale = 0.5]{model.eps}
+	\caption{Free Body Diagram of Quadcopter}
+\end{figure}
+
+If the position of the quadcopetr in the global frame is  defined by coordinates ($X_G, Y_{G}, Z_{G})$ and the orientation of its body frame $(x,y,z)$ in the global frame is  defined by Euler  angles ($\psi,\theta,\phi$), then  its generalized coordinates  become
+\begin{equation}
+q=[\begin{array}{cccccc}
+X_{G} & Y_{G} & Z_{G} & \psi & \theta & \phi\end{array}]^T= [\begin{array}{cccccc}
+q_{1} & q_{2} & q_{3} & q_4 & q_5 & q_6\end{array}]^T
+\end{equation}
+
+The transformation form the body frame to global frame is implemented through a rotation matrix
+{\small
+\begin{align}
+	R^b_G=&
+	\left[\begin{array}{ccc} \cos{q_{4}}\cos{q_{5}} &~ \cos{q_{4}}\sin{q_{5}}\sin{q_{6}}-\cos{q_{6}}\sin{q_{4}} & \\ 
+		\cos{q_{5}}\sin{q_{4}} & ~\cos{q_{4}}\cos{q_{6}}+\sin{q_{4}}\sin{q_{5}}\sin{q_{6}} & \cdots\\ 
+		-\sin{q_{5}} & ~\cos{q_{5}}\sin{q_{6}} &  \end{array}\right.\notag\\
+&\qquad	
+\left.\begin{array}{cc}
+&\sin{q_{4}}\sin{q_{6}}+\cos{q_{4}}\cos{q_{6}}\sin{q_{5}}\\
+\cdots&\cos{q_{6}}\sin{q_{4}}\sin{q_{5}}-\cos{q_{4}}\sin{q_{6}}\\
+&\cos{q_{5}}\cos{q_{6}}\end{array}\right]
+\end{align}
+Let the four forces produced by the thrust propellers in the body frame be
+\begin{equation}
+\vec{F}_{i}^b=\left[\begin{array}{ccc}
+	0&\quad
+	0&\quad
+	F_{i}
+\end{array}\right]^T,\qquad i=1,2,3,4,
+\end{equation}
+all acting at a distance $a$ from the center of gravity $G$ with $F_1$ and $F_3$ acting on the $x$- axis and $F_2$ and $F_4$ acting on the $y$-axis. Then the resultant moments of these forces about the quadcopters center of gravity in the body frame becomes 
+\begin{equation}
+	\vec{M}^b_G=\left[\begin{array}{ccc}
+		a\left(F_{2}-F_{4}\right)&\quad
+		-a\left(F_{1}-F_{3}\right)&\quad
+		0
+	\end{array}\right]^T
+\end{equation}
+of all forces acting on the quadcopter in the global frame becomes
+\begin{equation}
+\vec{F}_{R}(q)=\left[\begin{array}{c}
+	(F_{1}+F_{2}+F_{3}+F_{4})\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\\
+	(F_{1}+F_{2}+F_{3}+F_{4})\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
+	\left(F_{1}+F_{2}+F_{3}+F_{4}\right)\cos q_{5}\cos q_{6}-W
+\end{array}\right]
+\end{equation}
+where $W$ is the weight of the vehicle. 
+
+%And the resultant moment of these forces about $G$ become
+%
+%{\small
+%\begin{equation}
+%	\vec{M}_{G}(q)=a\left[\begin{array}{c}
+%		(F_{1}-F_{4})\cos q_4\cos q_5+\cdots\\
+%		\quad\cdots (F_2-F_3)(\cos q_4\sin q_5\sin q_6-\sin q_4\cos  q_6)\\
+%		\\
+%		(F_{1}-F_{4})\sin q_4\cos q_5+\cdots\\
+%		\quad\cdots (F_2-F_3)(\sin q_4\sin q_5\sin q_6+\cos q_4\cos  q_6)\\
+%		\\
+%		-(F_{1}-F_{4})\sin q_5+ (F_2-F_3)\cos q_5\sin q_6\\
+%	\end{array}\right]
+%\end{equation}}
+
+
+ If $\dot{q}_5, \dot{q}_6,$ and $\dot{q}_7$ are the yaw, pitch and roll rates (or Euler rates)  of the vehicle, then its angular velocity in the body frame becomes
+ 
+ \begin{equation}
+ 	\vec{\omega}^b=\left[\begin{array}{c}
+ 		\omega_{x}\\
+ 		\omega_{x}\\
+ 		\omega_{x}
+ 	\end{array}\right]=\left[\begin{array}{ccc} -\sin{q}_{5} & 0 & 1\\ \cos{q}_{5}\sin{q}_{6} & \cos{q}_{6} & 0\\ \cos{q}_{5}\cos{q}_{6}) &-\sin{q}_{6} & 0 \end{array}\right]\end{equation}
+Since the position vector of $G$ in the inertial frame is 
+\begin{equation}
+	\vec{r}_{G}= \left[\begin{array}{ccc}
+		q_1&\quad
+		q_2&\quad
+		q_3
+	\end{array}\right]^T
+\end{equation}
+then the generalized forces $Q_{i}$ acting on the vehicle can be defined  as
+\begin{equation}
+Q_{i}=\vec{F}_{R}\cdot\frac{\partial\vec{r}_{G}}{\partial q_{i}}+\vec{M}_{G}^b\frac{\partial\vec{\omega}^b}{\partial\dot{q_{i}}}, \qquad \forall i=1,2\cdots, 6,\end{equation}
+and the generalized mass of the vehicle can also be defined as
+\begin{equation}
+M(q)=\left(\frac{\partial\vec{r}_{G}}{\partial q}\right)^{T}m_{rr}\frac{\partial\vec{r}_{G}}{\partial q}+\left(\frac{\partial\vec{\omega}^b}{\partial\dot{q}}\right)^{T}m_{\theta\theta}\frac{\partial\vec{\omega}^b}{\partial\dot{q}}
+\end{equation}
+
+with
+
+\begin{equation}
+m_{rr}=\left[\begin{array}{ccc}
+	m & 0 & 0\\
+	0 & m & 0\\
+	0 & 0 & m
+\end{array}\right],\qquad
+m_{\theta\theta}=\left[\begin{array}{ccc}
+	I_{xx} & 0 & 0\\
+	0 & I_{yy} & 0\\
+	0 & 0 & I_{zz}
+\end{array}\right]
+\end{equation}
+
+It is from these quantities that equations of motion for the quad-copter can be established by
+\begin{equation}
+\frac{d}{dt}\left(\frac{\partial T(q,\dot{q})}{\partial\dot{q_{j}}}\right)-\frac{\partial T(q,\dot{q})}{\partial q_{j}}=Q_{j}(q)\label{eqL}
+\end{equation}
+ where $T$ is the kinetic energy  expressed  by
+\begin{equation}
+T(q,\dot{q})=\frac{1}{2}\dot{q}^{T}M(q)\dot{q}
+\end{equation}
+%
+%\[T= \frac{m\dot{q}_{1}^2}{2}+\frac{m\dot{q}_{2}^2}{2}+\frac{m\dot{q}_{3}^2}{2}+\frac{I_{x}{\dot{q}_{6}}^2}{2}+\frac{I_{y}{\dot{q}_{5}}^2}{2}+\frac{I_{x}\dot{q}_{4}^2\sin^2q_{5}}{2}\cdots\]
+%\[-\frac{I_{y}\dot{q}_{5}^2\sin^2q_{6}}{2}+\frac{I_{z}\dot{q}_{5}^2\sin^2q_{6}}{2}+\frac{I_{z}\dot{q}_{4}^2\cos^2q_{5}\cos^2q_{6}}{2}\cdots\]
+%\[+\frac{I_{y}\dot{q}_{4}^2\cos^2{q}_{5}\sin^2q_{6}}{2}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5}\cdots\]
+%\[+I_{y}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}\dot{q}_{4}\dot{q}_{5}\cdots\]
+%\[-I_{z}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}\dot{q}_{4}\dot{q}_{5} \]
+
+\[T= \tfrac{1}{2}m\dot{q}_{1}^2+\tfrac{1}{2}m\dot{q}_{2}^2+\tfrac{1}{2}m\dot{q}_{3}^2+\tfrac{1}{2}I_{x}{\dot{q}_{6}}^2+\tfrac{1}{2}I_{y}{\dot{q}_{5}}^2+\tfrac{1}{2}I_{x}\dot{q}_{4}^2\sin^2q_{5}\cdots\]
+\[+\tfrac{1}{2}(I_{z}-I_y)\dot{q}_{5}^2\sin^2q_{6}+\tfrac{1}{2}I_{z}\dot{q}_{4}^2\cos^2q_{5}\cos^2q_{6}+\tfrac{1}{2}I_{y}\dot{q}_{4}^2\cos^2{q}_{5}\sin^2q_{6}\cdots\]
+\[-(I_{z}-I_y)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5} \]
+%Although it is known that $I_{xx}\ne I_{yy}\ne I_{zz}$, equation (\ref{eqL})  is simplified by assuming that $I_{xx}\approx  I_{yy}$ in particular because of the geometry of most quadcopters. 
+If higher orders of sine terms are ignored, it leads to the following equations of motion:
+
+
+\[T= \tfrac{1}{2}m\dot{q}_{1}^2+\tfrac{1}{2}m\dot{q}_{2}^2+\tfrac{1}{2}m\dot{q}_{3}^2+\tfrac{1}{2}I_{x}{\dot{q}_{6}}^2+\tfrac{1}{2}I_{y}{\dot{q}_{5}}^2+\tfrac{1}{2}I_{z}\dot{q}_{4}^2\cdots\]
+\[-(I_{z}-I_y)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5} \]
+
+\begin{align}
+&\ddot{q}_{1}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\label{eom1}\\
+&\ddot{q_{2}}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
+&\ddot{q_{3}}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\cos q_{5}\cos q_{6}-\tfrac{W}{m}\\
+& I_{z}\ddot{q}_{4}-(I_z-I_{x})\ddot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\ddot{q_{6}}\sin{q}_{5}\cdots\notag\\
+&\qquad\cdots-(I_z-I_y+I_x)\dot{q}_5\dot{q}_6\cos{q}_5+(I_z-I_x)\dot{q}_5^2\sin{q}_5\cos{q}_6\sin{q}_6\cdots\notag\\
+&\qquad\cdots=	a(F_{4}-F_{2})\sin q_5+ a(F_3-F_1)\cos q_5\sin q_6\\
+&I_x\ddot{q}_5-(I_z-I_{x})\ddot{q}_{4}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}+(I_y-I_{x})\dot{q}_{4}\dot{q}_{5}\sin{q}_{5}\cos{q}_{6}\sin{q}_{6}\cdots\notag\\
+&\qquad\cdots-(I_z-2I_{x})\dot{q}_{4}\dot{q}_{6}\cos{q}_{5}=a(F_3-F_1)\cos q_6\\
+&I_x\ddot{q}_6-I_{x}\ddot{q}_4\sin q_5+(I_z-I_y-I_x)\dot{q}_4\dot{q}_5\cos{q}_5=-a(F_{4}-F_2)\label{eom6}
+\end{align}
+
+Now, if a state vector is defined as
+\begin{equation}
+	X= \left[\begin{array}{cc}
+		q&\quad
+		\dot{q}
+	\end{array}\right]^T
+\end{equation}
+and the control input is 
+\begin{equation}
+	u= \left[\begin{array}{cccc}
+		F_1&\quad
+		F_2&\quad
+		F_3&\quad
+		F_4
+	\end{array}\right]^T
+\end{equation}
+then the equations of motion (\ref{eom1})-(\ref{eom6}) can be expressed in state space form as
+\begin{equation}
+\dot{X}=\textbf{f}(X)+\textbf{g}(X)u+\textbf{W}\label{eqssM}
+\end{equation}
+Reverting to the notation of a stat vector $X\in\mathbb{R}^{12}$ instead of the generalized coordinate $q$ we define 
+\begin{align}
+	g_1(X)&=\tfrac{1}{m}\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\\
+	g_2(X)&=\tfrac{1}{m}\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
+	g_3(X)&=\tfrac{1}{m}\cos q_{5}\cos q_{6}\\
+\end{align}
+so that
+\begin{equation}
+	\textbf{f}(X)=\left[\begin{array}{c}
+		X_7\\
+	X_8\\
+		X_9\\
+		X_{10}\\
+		X_{11}\\
+	X_{12}\\ \left(\frac{I_{x}-I_{z}}{I_z}\right)\dot{q}_{5}^2\cos{q}_{5}+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\sin{q}_{5}\cdots\\\qquad\cdots+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)\dot{q}_{5}\dot{q}_{6}\cos{q}_{5}+\left(\frac{2{I_{x}}^2+{I_{z}}^2-3\,I_{x}I_{z}}{I_xI_z}\right)\dot{q}_{4}\dot{q}_{6}\cos{q}_{6}\sin{q}_{6}\\
+		0\\
+		0\\
+		0\\
+		\dot{q}_4\dot{q}_6\cos{q}_5\\
+		0
+	\end{array}\right]
+\end{equation}
+and
+{\scriptsize\begin{equation}
+\textbf{g}(X)=\left[\begin{array}{cccc}
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	g_1(X)\quad&g_1(X)\quad&g_1(X)\quad&g_1(X)\\
+	g_2(X)\quad&g_2(X)\quad&g_2(X)\quad&g_2(X)\\
+	g_3(X)\quad&g_3(X)\quad&g_3(X)\quad&g_2(X)\\
+	-\tfrac{a}{I_x}\sin q_5\cos{q_6}&0&\tfrac{a}{I_x}\sin q_5\cos{q_6}&0\\
+	0\quad&\tfrac{a}{I_Q}\cos q_6\quad&0\quad&-\tfrac{a}{I_Q}\cos q_6\\
+	\tfrac{a}{I_Q}&\\
+\end{array}\right]
+\end{equation}}
+
+$+(F_{3}-F_1)\frac{a}{I_x}\cos{q}_{5}\sin{q}_{6}$
+
+Then it turns out that any nonlinear control that can control the system of (\ref{eqssM}) can also be applied on this vehicle. The next section suggests implementing a sliding mode control structure for tracking a predetermined path $p(X)$.
+\newpage
+\normalsize
+\bibliographystyle{ieeetran}
+\bibliography{References}
+\end{document}
+
