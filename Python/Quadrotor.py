@@ -7,34 +7,99 @@ https://nbviewer.jupyter.org/github/plusk01/nonlinearquad/blob/master/sliding_mo
 
 np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
 
-def dynamics():
-    f = np.array([[X7],
-                [X8],
-                [X9],
-                [X10],
-                [X11],
-                [X12],
-                [((Ix-Iz)/Iz)*(dq5**2)*np.cos(q5) + 
-                ((Ix - Iy + Iz)/Iz)*dq4*dq5*np.cos(q5)*np.sin(q5) + 
-                ((Ix - Iy + Iz)/Iz)*dq5*dq6*np.cos(q5) + 
-                ((2*(Ix**2) + Iz**2 - 3*Ix*Iz)/(Ix*Iz))],
-                [0],
-                [0],
-                [0],
-                dq4*dq6*np.cos(q5),
-                [0]])
+class state_space(object):
+    def __init__(self):
+        self.name = 'State Space'
+        # super().__init__()
+        self.a = 0.5
+        self.m = 0.1
+        self.Ix = 0.001
+        self.Iy = 0.001
+        self.Iz = 0.001
+        self.q4 = 0
+        self.q5 = 0
+        self.q6 = 0
+        self.F1 = 0
+        self.F2 = 0
+        self.F3 = 0
+        self.F4 = 0
+        self.dq1 = 0
+        self.dq2 = 0
+        self.dq3 = 0
+        self.dq4 = 0
+        self.dq5 = 0
+        self.dq6 = 0
+    
+    def __str__(self):
+        return self.name
 
-    g = np.array([[0,0,0,0],
-                [0,0,0,0],
-                [0,0,0,0]
-                [0,0,0,0]
-                [0,0,0,0],
-                [0,0,0,0],
-                [g1, g1, g1, g1],
-                [g2, g2, g2, g2],
-                [g3, g3, g3, g3],
-                [-(a/Ix)*np.sin(q5)*np.cos(q6), 0, (a/Ix)*np.sin(q5)*np.cos(q6), 0],
-                [0, (a/Iq)*np.cos(q6), 0, -(a/Iq)*np.cos(q6)]])
+    def F(self):
+        f = np.array([[self.dq1],
+                    [self.dq2],
+                    [self.dq3],
+                    [self.dq4],
+                    [self.dq5],
+                    [self.dq6],
+                    [((self.Ix-self.Iz)/self.Iz)*(self.dq5**2)*np.cos(self.q5) + 
+                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.dq4*self.dq5*np.cos(self.q5)*np.sin(self.q5) + 
+                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.dq5*self.dq6*np.cos(self.q5) + 
+                    ((2*(self.Ix**2) + self.Iz**2 - 3*self.Ix*self.Iz)/(self.Ix*self.Iz))],
+                    [0],
+                    [0],
+                    [0],
+                    [self.dq4*self.dq6*np.cos(self.q5)],
+                    [0]])
+        print(f.shape)
+        return f
+
+    def g1(self):
+        return (1/self.m)*(np.cos(self.q4)*np.sin(self.q5)*np.cos(self.q6) + np.sin(self.q4)*np.sin(self.q6))
+
+    def g2(self):
+        return (1/self.m)*(np.sin(self.q4)*np.sin(self.q5)*np.cos(self.q6) - np.cos(self.q4)*np.sin(self.q6))
+    
+    def g3(self):
+        return (1/self.m)*np.cos(self.q5)*np.cos(self.q6)
+
+    def G(self):
+        g = np.array([[0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [self.g1(), self.g1(), self.g1(), self.g1()],
+                    [self.g2(), self.g2(), self.g2(), self.g2()],
+                    [self.g3(), self.g3(), self.g3(), self.g3()],
+                    [-(self.a/self.Ix)*np.sin(self.q5)*np.cos(self.q6), 0, (self.a/self.Ix)*np.sin(self.q5)*np.cos(self.q6), 0],
+                    [0, (self.a/self.Iz)*np.cos(self.q6), 0, -(self.a/self.Iz)*np.cos(self.q6)],
+                    [0,0,0,0]])
+        print(g.shape)
+        return g
+    def U(self):
+        u = np.array([[self.F1],[self.F2],[self.F3],[self.F4]])
+        # u = np.array([self.F1,self.F2,self.F3,self.F4])
+        print(u.shape)
+        return u
+
+    def dX(self):
+        return self.F() + np.dot(self.G(), self.U())
+
+# class path(object):
+#     def __init__(self) -> None:
+#         self.x = 0
+#         self.y = 0
+#         self.z = 0
+#     def error(self,estX, estY, estZ):
+#         self.errorX = 
+#         self.errorY = 
+#         self.errorZ = 
+
+#         return [self.errorX, self.errorY, self.errorZ]
+
+#     def plot(self, actual, est):
+        
+
 
 def sat(v):
     v = np.copy(v)
@@ -798,6 +863,10 @@ class SMC(Controller):
 
 
 if __name__ == "__main__":
+
+
+    # d = state_space()
+    # print(d.dX())
 
     # Instantiate a quadrotor model with the given initial conditions
     quad = Quadrotor(r=np.array([[0],[0],[-10]]),
