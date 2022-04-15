@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 
 """
 https://nbviewer.jupyter.org/github/plusk01/nonlinearquad/blob/master/sliding_mode_control.ipynb
+
+Inputs: X,Y,Z,Psi
+Outputs: F1,F2,F3,F4
+Feedback: IMU data x,y,z,
 """
 
 np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
@@ -11,55 +15,57 @@ class state_space(object):
     def __init__(self):
         self.name = 'State Space'
         # super().__init__()
-        self.a = 0.5
-        self.m = 0.1
+        self.a = 0.5 #distance to each motor from center of gravity
+        self.m = 0.1 #Physical mass
+        self.g = 9.81 #gravity
         self.Ix = 0.001
         self.Iy = 0.001
         self.Iz = 0.001
-        self.q4 = 0
-        self.q5 = 0
-        self.q6 = 0
-        self.F1 = 0
-        self.F2 = 0
-        self.F3 = 0
-        self.F4 = 0
-        self.dq1 = 0
-        self.dq2 = 0
-        self.dq3 = 0
-        self.dq4 = 0
-        self.dq5 = 0
-        self.dq6 = 0
+        self.x4 = 0 #Psi - Yaw axis - Z Axis Body
+        self.x5 = 0 #Theta - Roll axis - X Axis Body
+        self.x6 = 0 #Phi - Pitch Axis - Y Axis Body
+        self.x7 = 0 #dXg
+        self.x8 = 0 #dYg
+        self.x9 = 0 #dZg
+        self.x10 = 0
+        self.x11 = 0
+        self.x12 = 0
+        self.u1 = 0
+        self.u2 = 0
+        self.u3 = 0
+        self.u4 = 0
     
     def __str__(self):
         return self.name
 
     def F(self):
-        f = np.array([[self.dq1],
-                    [self.dq2],
-                    [self.dq3],
-                    [self.dq4],
-                    [self.dq5],
-                    [self.dq6],
-                    [((self.Ix-self.Iz)/self.Iz)*(self.dq5**2)*np.cos(self.q5) + 
-                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.dq4*self.dq5*np.cos(self.q5)*np.sin(self.q5) + 
-                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.dq5*self.dq6*np.cos(self.q5) + 
-                    ((2*(self.Ix**2) + self.Iz**2 - 3*self.Ix*self.Iz)/(self.Ix*self.Iz))],
+        f = np.array([[self.x7],
+                    [self.x8],
+                    [self.x9],
+                    [self.x10],
+                    [self.x11],
+                    [self.x12],
                     [0],
                     [0],
                     [0],
-                    [self.dq4*self.dq6*np.cos(self.q5)],
-                    [0]])
+                    [(self.Iy/self.Iz)*self.x10*self.x11*np.cos(self.x5)*np.sin(self.x5) + 
+                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.x11*self.x12*np.cos(self.x5) +
+                    ((2*self.Ix**2 + self.Iz**2 -3*self.Ix*self.Iz)/(self.Ix*self.Iz))*self.x10*self.x12*np.cos(self.x6)*np.sin(self.x6)],
+                    [((self.Iz - 2*self.Ix)/self.Ix)*self.x10*self.x11*np.cos(self.x5) +
+                    (((self.Iz-self.Ix)*(self.Ix-self.Iy+self.Iz))/(self.Ix*self.Iz)) * self.x11*self.x12*np.cos(self.x6)*np.sin(self.x6)],
+                    [(self.Iy/self.Ix)*self.x10*self.x11*np.cos(self.x5) +
+                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.x11*self.x12*np.cos(self.x5)*np.sin(self.x5)]])
         print(f.shape)
         return f
 
-    def g1(self):
-        return (1/self.m)*(np.cos(self.q4)*np.sin(self.q5)*np.cos(self.q6) + np.sin(self.q4)*np.sin(self.q6))
+    def alpha1(self):
+        return (1/self.m)*(np.cos(self.x4))*np.sin(self.x5)*np.cos(self.x6)
 
-    def g2(self):
-        return (1/self.m)*(np.sin(self.q4)*np.sin(self.q5)*np.cos(self.q6) - np.cos(self.q4)*np.sin(self.q6))
+    def alpha2(self):
+        return -(1/self.m)*np.cos(self.x4)*np.sin(self.x6)
     
-    def g3(self):
-        return (1/self.m)*np.cos(self.q5)*np.cos(self.q6)
+    def alpha3(self):
+        return (1/self.m)*np.cos(self.x5)*np.cos(self.x6)
 
     def G(self):
         g = np.array([[0,0,0,0],
@@ -68,17 +74,21 @@ class state_space(object):
                     [0,0,0,0],
                     [0,0,0,0],
                     [0,0,0,0],
-                    [self.g1(), self.g1(), self.g1(), self.g1()],
-                    [self.g2(), self.g2(), self.g2(), self.g2()],
-                    [self.g3(), self.g3(), self.g3(), self.g3()],
-                    [-(self.a/self.Ix)*np.sin(self.q5)*np.cos(self.q6), 0, (self.a/self.Ix)*np.sin(self.q5)*np.cos(self.q6), 0],
-                    [0, (self.a/self.Iz)*np.cos(self.q6), 0, -(self.a/self.Iz)*np.cos(self.q6)],
-                    [0,0,0,0]])
+                    [self.alpha1(), self.alpha1(), self.alpha1(), self.alpha1()],
+                    [self.alpha2(), self.alpha2(), self.alpha2(), self.alpha2()],
+                    [self.alpha3(), self.alpha3(), self.alpha3(), self.alpha3()],
+                    [(self.a/self.Ix)*np.cos(self.x5)*np.sin(self.x6), 0, -(self.a/self.Ix)*np.cos(self.x5)*np.sin(self.x6), 0],
+                    [-(self.a/self.Ix)*np.cos(self.x6), 0, (self.a/self.Ix)*np.cos(self.x6), 0],
+                    [0, self.a/self.Ix, 0, -self.a/self.Ix]])
         print(g.shape)
         return g
+
+    def W(self):
+        w = np.zeros((12,1))
+        w[8] = -self.g
+        return w
     def U(self):
-        u = np.array([[self.F1],[self.F2],[self.F3],[self.F4]])
-        # u = np.array([self.F1,self.F2,self.F3,self.F4])
+        u = np.array([[self.u1],[self.u2],[self.u3],[self.u4]])
         print(u.shape)
         return u
 
@@ -308,8 +318,10 @@ class Simulator(object):
         if 'state' not in self.hist:
             return
         
+
         plt.ioff()
-        fig = plt.figure(figsize=(12,10))
+
+        fig = plt.figure(figsize=(12,8))
         fig.subplots_adjust(wspace=0.25)
         fig.suptitle('Vehicle State', fontsize=16)
         
@@ -328,6 +340,15 @@ class Simulator(object):
         ycmd = self.hist['commanded'][1, :]
         zcmd = self.hist['commanded'][2, :]
         
+        fialpha3D = plt.figure()
+        ax3D = fialpha3D.add_subplot(projection='3d')
+        
+        ax3D.plot(xpos,ypos,zpos, label='actual')
+        ax3D.scatter(xcmd,ycmd,zcmd, color='red', marker='o', label='CMD')
+        ax3D.legend()
+
+        # plt.show()
+
         ax = fig.add_subplot(6,2,1)
         if not np.isnan(xcmd).any():
             ax.plot(tvec, xcmd, 'r-', label='command')
@@ -451,6 +472,7 @@ class Simulator(object):
         ax.set_ylabel('r'); ax.grid()
         
         plt.show()
+        plt.show()
         
         #
         # Control Effort
@@ -499,10 +521,10 @@ class Quadrotor(object):
         # phyiscal true parameters
         self.g = 9.81
         self.mass = 3.81
-        Jxx = 0.060224; Jyy = 0.122198; Jzz = 0.132166
-        self.I = np.array([[Jxx,0,0],
-                           [0,Jyy,0],
-                           [0,0,Jzz]])
+        Ixx = 0.060224; Iyy = 0.122198; Izz = 0.132166
+        self.I = np.array([[Ixx,0,0],
+                           [0,Iyy,0],
+                           [0,0,Izz]])
         
         self.Mu = np.diag(np.array([0.85,0.85,0.85])) # drag
 #         self.Mu = np.diag(np.array([0,0,0])) # drag
@@ -865,8 +887,8 @@ class SMC(Controller):
 if __name__ == "__main__":
 
 
-    # d = state_space()
-    # print(d.dX())
+    d = state_space()
+    print(d.dX())
 
     # Instantiate a quadrotor model with the given initial conditions
     quad = Quadrotor(r=np.array([[0],[0],[-10]]),
@@ -885,7 +907,11 @@ if __name__ == "__main__":
         # x = np.sin(2*np.pi*f*i*Ts)
         x = np.cos(2*np.pi*f*i*Ts)
         return np.array([x, 2, -1])
-
+    def set_position(t):
+        p1 = 1.20*t
+        p2 = 1.2*t
+        p3 = 2.50*t-0.05*t**2
+        return np.array([p1,p2,p3])
     cmdr.position(set_position)
 
     # Run the simulation

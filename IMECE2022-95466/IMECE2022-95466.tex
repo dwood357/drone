@@ -19,7 +19,7 @@
 %%% use twocolumn and 10pt options with the asme2e format
 \documentclass[twocolumn,10pt]{asme2e}
 \special{papersize=8.5in,11in}
-\usepackage{graphicx,amsmath,amssymb,mathtools,color}
+\usepackage{graphicx,amsmath,amssymb,mathtools,xcolor}
 
 %% The class has several options
 %  onecolumn/twocolumn - format for one or two columns per page
@@ -33,21 +33,21 @@
 %% The default is oneside, onecolumn, 10pt, final
 
 %%% Replace here with information related to your conference
-\confshortname{IMECE 2021}
+\confshortname{IMECE 2022}
 \conffullname{the ASME 2021 International Mechanical Engineering Congress \& Exposition}
 
 %%%%% for date in a single month, use
 %\confdate{24-28}
 %\confmonth{September}
 %%%%% for date across two months, use
-\confdate{November 1-5}
-\confyear{2021}
-\confcity{Virtual Conference}
-\confcountry{Online}
+\confdate{October 30- November 3}
+\confyear{2022}
+\confcity{Columbus, Ohio}
+\confcountry{USA}
 
 %%% Replace DETC2009/MESA-12345 with the number supplied to you 
 %%% by ASME for your paper.
-\papernum{IMECE2021-70691}
+\papernum{IMECE2022-95466}
 
 %%% You need to remove 'DRAFT: ' in the title for the final submitted version.
 \title{DRAFT: Sliding Mode Control of a Quad-Copter for Autonomous Trajectory Tracking }
@@ -100,8 +100,8 @@ Derivation of the equations of motion of the quadrotor requires defining two coo
 Sliding mode control is a technique that allows}
 
 \section*{QUADCOPTER MODELLING}
-\subsection*{The Dynamic Model}
-In order to control the quadcopter, its clear dynamic model is needed. The quadcopter model uses a mix of vehicle's body frame $(x,y,z) $ through which it reads its sensors, but its motion is controlled using the global inertial frame $(X,Y,Z)$, so the sensor readings of the quadcopter must always be translated by the controller back into these global coordinates. Currently, there are two dynamiv models that are popular among researchers on quadcopters: the most popular one is the  model of \cite{1013341}, which is a system of simplified Newton-Euler equations where the Newton equations are taken in the global frame, and the Euler equations are taken in the body frame using Euler rates. This model has been the most popular among quadcopter researchers as recently as \cite{lee2009feedback,mu2019learning,castillo2019disturbance}. The next model is that of \cite{bouabdallah2007design}, which also has been very popular among researchers, see for example \cite{mellinger2012trajectory,alexis2011switching,leishman2014quadrotors}. The model of  \cite{bouabdallah2007design} is based on Lagrangian formalism assuming that the cosines and sines of Euler angles for the rotation part of the motion are negligible except for the linear part of the motion. Both the models of \cite{1013341} and \cite{bouabdallah2007design} assume that the quadcopter measurements represent the state vector, i.e., the 3-D coordinates of the vehicle, the three Euler angles and their rates of change. There are some applications where this assumption is not realizable, even with quadcopters equipped with high precision GNSS device, because most onboard gyrometers can only measure angular velocities, not Euler rates.
+%\subsection*{The Dynamic Model}
+In order to control the quadcopter, its clear dynamic model is needed. The quadcopter model uses a mix of vehicle's body frame $(x,y,z) $ through which it reads its sensors, but its motion is controlled using the global inertial frame $(X,Y,Z)$, so the sensor readings of the quadcopter must always be translated by the controller back into these global coordinates. Currently, there are two dynamic models that are popular among researchers on quadcopters: the most popular one is the  model of \cite{1013341}, which is a system of simplified Newton-Euler equations where the Newton equations are taken in the global frame, and the Euler equations are taken in the body frame using Euler rates. This model has been the most popular among quadcopter researchers as recently as \cite{lee2009feedback,mu2019learning,castillo2019disturbance}. The next model is that of \cite{bouabdallah2007design}, which also has been very popular among researchers, see for example \cite{mellinger2012trajectory,alexis2011switching,leishman2014quadrotors}. The model of  \cite{bouabdallah2007design} is based on Lagrangian formalism assuming that the cosines and sines of Euler angles for the rotation part of the motion are negligible except for the linear part of the motion. Both the models of \cite{1013341} and \cite{bouabdallah2007design} assume that the quadcopter measurements represent the state vector, i.e., the 3-D coordinates of the vehicle, the three Euler angles and their rates of change. There are some applications where this assumption is not realizable, even with quadcopters equipped with high precision GNSS device, because most onboard gyrometers can only measure angular velocities, not Euler rates.
 
 
 This section develops a model also using Lagrangian formalism but limits cases where the Euler angles can be ignored. On the rotary part of the motion, the model uses angular velocities of the vehicle, which can be measured by its gryometers instead of  the Euler rates.
@@ -146,15 +146,15 @@ all acting at a distance $a$ from the center of gravity $G$ with $F_1$ and $F_3$
 		0
 	\end{array}\right]^T
 \end{equation}
-leading to all the resultant force acting on the quadcopter in the global frame:
+of all forces acting on the quadcopter in the global frame becomes
 \begin{equation}
 \vec{F}_{R}(q)=\left[\begin{array}{c}
-	(\sum_{i=1}^{4}{F_i})\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\\
-	(\sum_{i=1}^{4}{F_i})\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
-	(\sum_{i=1}^{4}{F_i})\cos q_{5}\cos q_{6}-W
+	(F_{1}+F_{2}+F_{3}+F_{4})\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\\
+	(F_{1}+F_{2}+F_{3}+F_{4})\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
+	\left(F_{1}+F_{2}+F_{3}+F_{4}\right)\cos q_{5}\cos q_{6}-W
 \end{array}\right]
 \end{equation}
-where $W$ is the weight of the vehicle.
+where $W$ is the weight of the vehicle. 
 
 %And the resultant moment of these forces about $G$ become
 %
@@ -172,21 +172,14 @@ where $W$ is the weight of the vehicle.
 %\end{equation}}
 
 
- If $\dot{\psi}$,$\dot{\theta}$ and $\dot{\phi}$ are the yaw, pitch and roll rates (or Euler rates)  of the vehicle, then its angular velocity in the body frame becomes
+ If $\dot{q}_5, \dot{q}_6,$ and $\dot{q}_7$ are the yaw, pitch and roll rates (or Euler rates)  of the vehicle, then its angular velocity in the body frame becomes
  
  \begin{equation}
  	\vec{\omega}^b=\left[\begin{array}{c}
  		\omega_{x}\\
  		\omega_{x}\\
  		\omega_{x}
- 	\end{array}\right]=\left[\begin{array}{ccc}
-		-\sin{q}_{5} & 0 & 1\\
-		\cos{q}_{5}\sin{q}_{6} & \cos{q}_{6} & 0\\
-		\cos{q}_{5}\cos{q}_{6}) &-\sin{q}_{6} & 0 \end{array}\right]\left[\begin{array}{c}
-			\dot{q}_5\\
-			\dot{q}_6\\
-			\dot{q}_7
-			\end{array}\right]\end{equation}
+ 	\end{array}\right]=\left[\begin{array}{ccc} -\sin{q}_{5} & 0 & 1\\ \cos{q}_{5}\sin{q}_{6} & \cos{q}_{6} & 0\\ \cos{q}_{5}\cos{q}_{6}) &-\sin{q}_{6} & 0 \end{array}\right]\end{equation}
 Since the position vector of $G$ in the inertial frame is 
 \begin{equation}
 	\vec{r}_{G}= \left[\begin{array}{ccc}
@@ -233,38 +226,34 @@ T(q,\dot{q})=\frac{1}{2}\dot{q}^{T}M(q)\dot{q}
 %\[+I_{y}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}\dot{q}_{4}\dot{q}_{5}\cdots\]
 %\[-I_{z}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}\dot{q}_{4}\dot{q}_{5} \]
 
-\[T= \tfrac{1}{2}m\dot{q}_{1}^2+\tfrac{1}{2}m\dot{q}_{2}^2+\tfrac{1}{2}m\dot{q}_{3}^2+\tfrac{1}{2}I_{x}{\dot{q}_{6}}^2+\tfrac{1}{2}I_{y}{\dot{q}_{5}}^2+\tfrac{1}{2}I_{x}\dot{q}_{4}^2\sin^2q_{5}\cdots\]
-\[+\tfrac{1}{2}(I_{z}-I_y)\dot{q}_{5}^2\sin^2q_{6}+\tfrac{1}{2}I_{z}\dot{q}_{4}^2\cos^2q_{5}\cos^2q_{6}+\tfrac{1}{2}I_{y}\dot{q}_{4}^2\cos^2{q}_{5}\sin^2q_{6}\cdots\]
-\[-(I_{z}-I_y)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5} \]
-%Although it is known that $I_{xx}\ne I_{yy}\ne I_{zz}$, equation (\ref{eqL})  is simplified by assuming that $I_{xx}\approx  I_{yy}$ in particular because of the geometry of most quadcopters. 
-If higher orders of sine terms are ignored, it leads to the following equations of motion:
-
-
-\[T= \tfrac{1}{2}m\dot{q}_{1}^2+\tfrac{1}{2}m\dot{q}_{2}^2+\tfrac{1}{2}m\dot{q}_{3}^2+\tfrac{1}{2}I_{x}{\dot{q}_{6}}^2+\tfrac{1}{2}I_{y}{\dot{q}_{5}}^2+\tfrac{1}{2}I_{z}\dot{q}_{4}^2\cdots\]
-\[-(I_{z}-I_y)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5} \]
-
+%\[T= \tfrac{1}{2}m\dot{q}_{1}^2+\tfrac{1}{2}m\dot{q}_{2}^2+\tfrac{1}{2}m\dot{q}_{3}^2+\tfrac{1}{2}I_{x}{\dot{q}_{6}}^2+\tfrac{1}{2}I_{y}{\dot{q}_{5}}^2+\tfrac{1}{2}I_{x}\dot{q}_{4}^2\sin^2q_{5}\cdots\]
+%\[+\tfrac{1}{2}(I_{z}-I_y)\dot{q}_{5}^2\sin^2q_{6}+\tfrac{1}{2}I_{z}\dot{q}_{4}^2\cos^2q_{5}\cos^2q_{6}+\tfrac{1}{2}I_{y}\dot{q}_{4}^2\cos^2{q}_{5}\sin^2q_{6}\cdots\]
+%\[-(I_{z}-I_y)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5} \]
+%%Although it is known that $I_{xx}\ne I_{yy}\ne I_{zz}$, equation (\ref{eqL})  is simplified by assuming that $I_{xx}\approx  I_{yy}$ in particular because of the geometry of most quadcopters. 
+The development in this work assumes that the values of Euler angles are bound within the range from $-\tfrac{\pi}{6}\le\left(\psi,\theta,\phi\right)\le \tfrac{\pi}{6};$ therefore higher orders of sine terms can be ignored. The resulting kinetic energy leads to the following equations of motion:
+%\begin{align}T=& \tfrac{1}{2}m\dot{q}_{1}^2+\tfrac{1}{2}m\dot{q}_{2}^2+\tfrac{1}{2}m\dot{q}_{3}^2+\tfrac{1}{2}I_{x}{\dot{q}_{6}}^2+\tfrac{1}{2}I_{y}{\dot{q}_{5}}^2+\tfrac{1}{2}I_{z}\dot{q}_{4}^2\cdots\notag\\
+%&\qquad\cdots-(I_{z}-I_y)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\dot{q}_{4}\dot{q}_{6}\sin{q}_{5} \end{align}
 \begin{align}
-&\ddot{q}_{1}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\label{eom1}\\
-&\ddot{q_{2}}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
+&\ddot{q}_{1}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\cos q_4 \sin q_5 \cos q_6\label{eom1}\\
+&\ddot{q_{2}}=-\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\cos q_4\sin q_6\\
 &\ddot{q_{3}}=\tfrac{1}{m}(F_{1}+F_{2}+F_{3}+F_{4})\cos q_{5}\cos q_{6}-\tfrac{W}{m}\\
-& I_{z}\ddot{q}_{4}-(I_z-I_{x})\ddot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-I_{x}\ddot{q_{6}}\sin{q}_{5}\cdots\notag\\
-&\qquad\cdots-(I_z-I_y+I_x)\dot{q}_5\dot{q}_6\cos{q}_5+(I_z-I_x)\dot{q}_5^2\sin{q}_5\cos{q}_6\sin{q}_6\cdots\notag\\
-&\qquad\cdots=	a(F_{4}-F_{2})\sin q_5+ a(F_3-F_1)\cos q_5\sin q_6\\
-&I_x\ddot{q}_5-(I_z-I_{x})\ddot{q}_{4}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}+(I_y-I_{x})\dot{q}_{4}\dot{q}_{5}\sin{q}_{5}\cos{q}_{6}\sin{q}_{6}\cdots\notag\\
-&\qquad\cdots-(I_z-2I_{x})\dot{q}_{4}\dot{q}_{6}\cos{q}_{5}=a(F_3-F_1)\cos q_6\\
+& I_{z}\ddot{q}_{4}-(I_z-I_{x})\ddot{q}_{5}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-(I_z-I_y+I_x)\dot{q}_5\dot{q}_6\cos{q}_5\cdots\notag\\
+&\qquad\cdots-I_{x}\ddot{q_{6}}\sin{q}_{5}=	a(F_{4}-F_{2})\sin q_5+ a(F_3-F_1)\cos q_5\sin q_6\\
+&I_x\ddot{q}_5-(I_z-I_{x})\ddot{q}_{4}\cos{q}_{5}\cos{q}_{6}\sin{q}_{6}-(I_z-2I_{x})\dot{q}_{4}\dot{q}_{6}\cos{q}_{5}\cdots\notag\\
+&\qquad\cdots=a(F_3-F_1)\cos q_6\\
 &I_x\ddot{q}_6-I_{x}\ddot{q}_4\sin q_5+(I_z-I_y-I_x)\dot{q}_4\dot{q}_5\cos{q}_5=-a(F_{4}-F_2)\label{eom6}
 \end{align}
 
 Now, if a state vector is defined as
 \begin{equation}
-	X= \left[\begin{array}{cc}
+	\textbf{x}= \left[\begin{array}{cc}
 		q&\quad
 		\dot{q}
 	\end{array}\right]^T
 \end{equation}
 and the control input is 
 \begin{equation}
-	u= \left[\begin{array}{cccc}
+	\textbf{u}= \left[\begin{array}{cccc}
 		F_1&\quad
 		F_2&\quad
 		F_3&\quad
@@ -273,76 +262,218 @@ and the control input is
 \end{equation}
 then the equations of motion (\ref{eom1})-(\ref{eom6}) can be expressed in state space form as
 \begin{equation}
-\dot{X}=\textbf{f}(X)+\textbf{g}(X)u+\textbf{W}\label{eqssM}
-\end{equation}
-\begin{equation}
-	Y= h(X) = \left[\begin{array}{cccc}
-		q_1&\quad
-		q_2&\quad
-		q_3&\quad
-		q_4
-	\end{array}\right]
+\dot{\textbf{x}}=\textbf{f}(\textbf{x})+\textbf{g}(\textbf{x})\textbf{u}+\textbf{W}\label{eqssM}
 \end{equation}
 Reverting to the notation of a stat vector $X\in\mathbb{R}^{12}$ instead of the generalized coordinate $q$ we define 
 \begin{align}
-	g_1(X)&=\tfrac{1}{m}\left(\cos q_4 \sin q_5 \cos q_6+\sin q_4\sin q_6\right)\\
-	g_2(X)&=\tfrac{1}{m}\left(\sin q_4 \sin q_5 \cos q_6-\cos q_4\sin q_6\right)\\
-	g_3(X)&=\tfrac{1}{m}\cos q_{5}\cos q_{6}\\
+	\alpha_1(\textbf{x})&=\tfrac{1}{m}\cos x_4 \sin x_5 \cos x_6\\
+	\alpha_2(\textbf{x})&=-\tfrac{1}{m}\cos x_4\sin x_6\\
+	\alpha_3(\textbf{x})&=\tfrac{1}{m}\cos x_{5}\cos x_{6}
 \end{align}
 so that
 \begin{equation}
-	\textbf{f}(X)=\left[\begin{array}{c}
-		X_7\\
-	X_8\\
-		X_9\\
-		X_{10}\\
-		X_{11}\\
-	X_{12}\\ \left(\frac{I_{x}-I_{z}}{I_z}\right)\dot{q}_{5}^2\cos{q}_{5}+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)\dot{q}_{4}\dot{q}_{5}\cos{q}_{5}\sin{q}_{5}\cdots\\\qquad\cdots+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)\dot{q}_{5}\dot{q}_{6}\cos{q}_{5}+\left(\frac{2{I_{x}}^2+{I_{z}}^2-3\,I_{x}I_{z}}{I_xI_z}\right)\dot{q}_{4}\dot{q}_{6}\cos{q}_{6}\sin{q}_{6}\\
-		0\\
-		0\\
-		0\\
-		\dot{q}_4\dot{q}_6\cos{q}_5\\
-		0
+	\textbf{f}(\textbf{x})=\left[\begin{array}{c}
+		x_7\\
+	x_8\\
+		x_9\\
+		x_{10}\\
+		x_{11}\\
+	x_{12}\\
+	0\\
+	0\\
+	0\\ \frac{I_y}{I_z}x_{10}x_{11}\cos{x}_{5}\sin{x}_{5}+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)x_{11}x_{12}\cos{x}_{5}\cdots\\\qquad\cdots+\left(\frac{2{I_{x}}^2+{I_{z}}^2-3\,I_{x}I_{z}}{I_xI_z}\right)x_{10}x_{12}\cos{x}_{6}\sin{x}_{6}\\
+	\left(\frac{I_z-2I_x}{I_x}\right)x_{10}x_{11}\cos{x}_{5}+\left(\frac{(I_z-I_x)(I_x-I_y+I_z)}{I_xI_z}\right)x_{11}x_{12}\cos{x}_{6}\sin{x}_{6}\\
+	\frac{I_y}{I_x}x_{10}x_{11}\cos{x}_{5}+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)x_{11}x_{12}\cos{x}_{5}\sin{x}_{5}
 	\end{array}\right]
 \end{equation}
 and
 {\scriptsize\begin{equation}
-\textbf{g}(X)=\left[\begin{array}{cccc}
+\textbf{g}(\textbf{x})=\left[\begin{array}{cccc}
 	0\quad&0\quad&0\quad&0\\
 	0\quad&0\quad&0\quad&0\\
 	0\quad&0\quad&0\quad&0\\
 	0\quad&0\quad&0\quad&0\\
 	0\quad&0\quad&0\quad&0\\
 	0\quad&0\quad&0\quad&0\\
-	g_1(X)\quad&g_1(X)\quad&g_1(X)\quad&g_1(X)\\
-	g_2(X)\quad&g_2(X)\quad&g_2(X)\quad&g_2(X)\\
-	g_3(X)\quad&g_3(X)\quad&g_3(X)\quad&g_2(X)\\
-	-\tfrac{a}{I_x}\sin q_5\cos{q_6}&0&\tfrac{a}{I_x}\sin q_5\cos{q_6}&0\\
-	0\quad&\tfrac{a}{I_Q}\cos q_6\quad&0\quad&-\tfrac{a}{I_Q}\cos q_6\\
-	\tfrac{a}{I_Q}&\\
+	\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\\
+	\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\\
+	\alpha_3(\textbf{x})\quad&\alpha_3(\textbf{x})\quad&\alpha_3(\textbf{x})\quad&\alpha_2(\textbf{x})\\
+	\tfrac{a}{I_x}\cos x_5\sin{x_6}&0&-\tfrac{a}{I_x}\cos x_5\sin{x_6}&0\\
+	-\tfrac{a}{I_x}\cos x_6&0&\tfrac{a}{I_x}\cos x_6&0\\
+	0&\tfrac{a}{I_x}&0&-\tfrac{a}{I_x}
 \end{array}\right]
 \end{equation}}
+where \textbf{W} is a constant vector contributed by gravity $g$ defined in this case as
+{\scriptsize\begin{equation}
+	\textbf{W}=\left[\begin{array}{c}
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	-g\\
+	0\\
+	0\\
+	0
+	\end{array}\right]
+	\end{equation}}
 
-$+(F_{3}-F_1)\frac{a}{I_x}\cos{q}_{5}\sin{q}_{6}$
+Then it turns out that any nonlinear control that can control the system of (\ref{eqssM}) can also be applied on this vehicle. The next section suggests implementing a sliding mode control structure for tracking a predetermined path $\textbf{p}(t)$.
 
-Then it turns out that any nonlinear control that can control the system of (\ref{eqssM}) can also be applied on this vehicle. The next section suggests implementing a sliding mode control structure for tracking a predetermined path $p(X)$.
-
-With our state space system defined in (21),(22), we can now define a control law using Sliding Mode Control.
-
-The purpose of the control law is to bring the system trajectories to a defined Sliding Surface s(x). This is achieved by using a Switching Surface S(x), these terms are related as follows:
-
-\begin{equation}
-	\dot{S}(s) = -\sigma(x)sgn(s(x))
+\section*{CONTROL STRUCTURE}
+The quadcopter is assumed to be equipped with an RTK GPS, a gyrometer, and a baromteric pressure altmeter. Useful measurements $\textbf{y}_m$ are the  $X$ and $Y$ coordinates measured by the GPS in the UTM projection as Eastings and Northings, the altitude $Z$  measured by the barometeric pressure altimeter along with euler rates $\dot{\psi}, \dot{\theta},$ and $\dot{\phi}$ measured from the gyrometer; i.e.,
+\begin{equation}\textbf{y}_m=\left[\begin{array}{c}
+		X\\
+		Y\\
+		Z\\
+		\dot{\psi}\\ 
+		\dot{\theta}\\
+		\dot{\phi}
+	\end{array}\right]=\left[\begin{array}{c}
+		x_1\\
+		x_2\\
+		x_3\\
+		x_{10}\\
+		x_{11}\\
+		x_{12}
+	\end{array}\right]\end{equation}
+However, useful measurements $\textbf{y}$ for use in trajectory control  will be the linear positions only, i.e.,
+\begin{equation}\textbf{y}=h(\textbf{x})=\left[\begin{array}{c}
+	X\\
+	Y\\
+	Z
+\end{array}\right]=\left[\begin{array}{c}
+x_1\\
+x_2\\
+x_3
+\end{array}\right]\end{equation}
+This is a MIMO nonlinear system  that can be expressed with four inputs as
+\begin{align}\dot{\textbf{x}}&=\textbf{f}(\textbf{x})+\textbf{g}(\textbf{x})\textbf{u}=\textbf{f}(\textbf{x})+\sum_{k=1}^4 g_k(\textbf{x})u_k\end{align}
+and 3 outputs 
+\begin{align}
+y_1 &= h_1(\textbf{x})=x_1,\\
+y_2 &= h_2(\textbf{x})=x_2,\\
+y_3 &= h_3(\textbf{x})=x_3\end{align}
+Therefore
+\begin{equation}\dot{\textbf{y}}=\textbf{L}_fh(x)+\textbf{L}_{g}h(x)\textbf{u}=\left[\begin{array}{c}
+	x_7\\
+	x_8\\
+	x_9
+\end{array}\right]+\left[\begin{array}{cccc}
+0&0&0&0\\
+0&0&0&0\\
+0&0&0&0
+\end{array}\right]\left[\begin{array}{c}
+u_1\\
+u_2\\
+u_3\\
+u_4
+\end{array}\right]
 \end{equation}
+where $\textbf{L}_\gamma \eta(x)$ is the lie derivative function $\eta(x)$ with respect to function $\gamma(x).$ 
+The next derivative lead to
+\begin{align}\ddot{\textbf{y}}&=\textbf{L}_f^2h(x)+\textbf{L}_{g}^2h(x)\textbf{u}\label{eq34}\\
+	&=\left[\begin{array}{c}
+	0\\
+	0\\
+	0
+\end{array}\right]+\left[\begin{array}{cccc}
+	\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\\
+\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\\
+\alpha_3(\textbf{x})\quad&\alpha_3(\textbf{x})\quad&\alpha_3(\textbf{x})\quad&\alpha_2(\textbf{x})\\
+\end{array}\right]\left[\begin{array}{c}
+u_1\\
+u_2\\
+u_3\\
+u_4
+\end{array}\right]
+	\end{align}
+showing that the system has a relative degree of 1; but its decoupling matrix is singular, therefore direct application of output feedback linearization control will not work \cite{isidori1995nonlinear}. However, this information about the system's relative degree makes it possible to define the sliding surface as\cite{slotine1991applied}
+\begin{align}\sigma(\textbf{x},t)&=\left(\frac{d}{dt}+\lambda\right)^1\left[\textbf{y}-\textbf{p}(t)\right]\\
+&=\dot{\textbf{y}}-\dot{\textbf{p}}(t)+\lambda\left[\textbf{y}-\textbf{p}(\textbf{x},t)\right]\label{eq37}\end{align} 
+where $\gamma$ is an arbitrary diagonal matrix  of tolerances allowed on the trajectory error, and $\textbf{p}(t)$ is the desired time dependent trajectory expressed as
+\begin{equation}\textbf{p}(t)=\left[\begin{array}{c}
+	x_1(t)\\
+	x_2(t)\\
+	x_3(t)
+\end{array}\right],\qquad t\ge0\end{equation}
+This sliding surface is independent of the control input $\textbf{u}.$
+Now, the Lyapunov function for this motion can be defined in terms of this sliding surface as
+\begin{equation}V(\textbf{x})=\tfrac{1}{2}\sigma(\textbf{x},t)^T\sigma(\textbf{x},t)\end{equation}
+and for the stability of motion, this function must satisfy the Lyapunov condition
+\begin{equation}\dot{V}(\textbf{x},t)=\sigma(\textbf{x},t)^T\dot\sigma(\textbf{x},t)\le0\end{equation}
+so that whenever $\sigma(\textbf{x},t)>0$ then $\dot\sigma(\textbf{x},t)<0$ and vice versa. It is from these observations where the sliding control structure can be defined as
 \begin{equation}
-	u(x) =
-	\begin{cases} 
-		-\lvert L_g S(x) \rvert^{-1}[L_f S(x) - \sigma(s)] & if S(x) > 0 \\
-		-\lvert L_g S(x) \rvert^{-1}[L_f S(x) + \sigma(s)] & if S(x) < 0
-	 \end{cases}
+	\textbf{u}=\begin{cases}
+		\begin{array}{lr}
+			\textbf{u}^{+}; &  \text{if}\quad \sigma(\textbf{x})>0\\  
+			\textbf{u}_o; &  \text{if}\quad \sigma(\textbf{x})=0\\  
+			\textbf{u}^{-}; &  \text{if}\quad \sigma(\textbf{x})<0\\
+		\end{array}
+	\end{cases}\label{eq44}
 \end{equation}
-\newpage
-\normalsize
+where $\textbf{u}_o$ is the control required to drive the quad-copter to the destination while $\textbf{u}^{+}$ and $\textbf{u}^{-}$ are computed to satisfy the corresponding requirements on $\dot\sigma(\textbf{x},t)$ to bring the quad-copter back to the sliding surface.
+
+
+Equations (\ref{eq34}) and (\ref{eq37}) show that, since $\textbf{L}_f^2h(x)=0$ then by denoting
+\begin{equation}\textbf{A}\triangleq\textbf{L}_{g}^2h(x)\end{equation} it follows that
+\begin{align}\dot{\sigma}(\textbf{x},t)&=\ddot{\textbf{y}}-\ddot{\textbf{p}}(t)+\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\\
+&=\textbf{A}\textbf{u}-\ddot{\textbf{p}}(t)+\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\end{align}
+Therefore, $\textbf{u}_o, \textbf{u}^{+}$ and $\textbf{u}^{-}$ must be defined such that
+\begin{align}
+	\textbf{u}^{+}<\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right), \qquad \sigma(\textbf{x})>0\\
+	\textbf{u}_o=\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right), \qquad \sigma(\textbf{x})=0\\
+	\textbf{u}^{-}>\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right),\qquad \sigma(\textbf{x})<0 \label{eq46}
+\end{align}
+For implementation purposes, these equations will be evaluated on element-by-element basis corresponding to the coordinate deviations from the desired path, i.e., \begin{equation}
+	\textbf{u}=\begin{cases}
+		\begin{array}{lr}
+			\textbf{u}^{+}; &  \text{if}\quad \sigma_i(\textbf{x})>0\\  
+			\textbf{u}_o; &  \text{if}\quad \sigma_i(\textbf{x})=0\\ 
+			\textbf{u}^{-}; &  \text{if}\quad \sigma_i(\textbf{x})<0\\
+		\end{array}
+	\end{cases},\qquad i=1,2,3
+\end{equation}
+where for some small anti-chatter factor $\varepsilon>0$
+\begin{align}
+	\textbf{u}^{+}&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]-\varepsilon\sigma_i(\textbf{x})\right)\\
+	\textbf{u}_o&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]\right)\\
+	\textbf{u}^{-}&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]+\varepsilon\sigma_i(\textbf{x})\right) \label{eq46}
+\end{align}
+and $\textbf{A}_i$ is row $i$ of matrix $\textbf{A}$.
+
+\section{NUMERICAL EXAMPLES}
+\color{purple}
+This section presents and discusses numerical results obtained by using the model and the control schemes developed above to simulate two tripos of the quad-copter motion. The first example considers a constant speed motion along a curved parabolic path in one vertical plane defined as
+\begin{equation}\textbf{p}(t)=\left[\begin{array}{c}
+	1.20t\\
+	1.20t\\
+	2.50t-0.05t^2
+\end{array}\right],\end{equation}
+\begin{figure}[h]
+	\includegraphics[scale=0.5]{path1}
+	\caption{Simulation Path 1}
+\end{figure}
+The second example considers a path motion along a
+\begin{equation}\textbf{p}(t)=\left[\begin{array}{c}
+		1.20t\cos(0.020t)\\
+		3.60t\sin(0.062t)\\
+		2.40t-0.05t^2
+	\end{array}\right],\end{equation}
+\begin{figure}[h]
+	\includegraphics[scale=0.5]{path2}
+	\caption{Simulation Path 2}
+\end{figure}
+The simulated quad-copter is assumed to have a mass $m= .... kg,$ principal second moments of inertia $I_z=...., I_x=I_y=...$ and the inter-propeller distances $a=...m$. Both simulations run for 
+
+
+\subsection {Simulation along a Parabolic Path in a Plane}
+
+\subsection {Simulation in a Curved Manifold}
+\color{black}
 \bibliographystyle{ieeetran}
 \bibliography{References}
 \end{document}

@@ -1,12 +1,12 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.3.3)  15 MAR 2022 23:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.3.3)  6 APR 2022 22:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/danwood/projects/drone/Dan/IMECE2021-70691.tex
-(/Users/danwood/projects/drone/Dan/IMECE2021-70691.tex
+**/Users/danwood/projects/drone/IMECE2022-95466/IMECE2022-95466.tex
+(/Users/danwood/projects/drone/IMECE2022-95466/IMECE2022-95466.tex
 LaTeX2e <2020-10-01> patch level 4
-L3 programming layer <2021-02-18> (/Users/danwood/projects/drone/Dan/asme2e.cls
+L3 programming layer <2021-02-18> (/Users/danwood/projects/drone/IMECE2022-95466/asme2e.cls
 Document Class: asme2e 2001/2/14 v2.0 Standard LaTeX document class
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
@@ -184,12 +184,21 @@ LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 130.
 \l_MT_below_shortintertext_sep=\dimen158
 \xmathstrut@box=\box51
 \xmathstrut@dim=\dimen159
-) (/usr/local/texlive/2021/texmf-dist/tex/latex/graphics/color.sty
-Package: color 2020/02/24 v1.2b Standard LaTeX Color (DPC)
+) (/usr/local/texlive/2021/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
  (/usr/local/texlive/2021/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package color Info: Driver file: pdftex.def on input line 147.
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 )
 LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 80.
  (/usr/local/texlive/2021/texmf-dist/tex/latex/psnfss/ot1ptm.fd
@@ -198,8 +207,8 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count273
 \l__pdf_internal_box=\box52
-) (/Users/danwood/projects/drone/Dan/IMECE2021-70691.aux)
-\openout1 = `IMECE2021-70691.aux'.
+) (/Users/danwood/projects/drone/IMECE2022-95466/IMECE2022-95466.aux)
+\openout1 = `IMECE2022-95466.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 80.
 LaTeX Font Info:    ... okay on input line 80.
@@ -318,11 +327,11 @@ LaTeX Warning: Citation `leishman2014quadrotors' on page 2 undefined on input li
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package epstopdf Info: Source file: <model.eps>
-(epstopdf)                    date: 2022-02-17 22:46:05
+(epstopdf)                    date: 2021-04-29 00:05:06
 (epstopdf)                    size: 11274 bytes
 (epstopdf)             Output file: <model-eps-converted-to.pdf>
-(epstopdf)                    date: 2022-02-17 22:46:05
-(epstopdf)                    size: 10032 bytes
+(epstopdf)                    date: 2022-04-03 23:31:55
+(epstopdf)                    size: 10370 bytes
 (epstopdf)             Command: <repstopdf --outfile=model-eps-converted-to.pdf model.eps>
 (epstopdf)             \includegraphics on input line 109.
 Package epstopdf Info: Output file is already uptodate.
@@ -331,26 +340,89 @@ File: model-eps-converted-to.pdf Graphic file (type pdf)
 <use model-eps-converted-to.pdf>
 Package pdftex.def Info: model-eps-converted-to.pdf  used on input line 109.
 (pdftex.def)             Requested size: 220.82445pt x 159.09398pt.
- [2 </Users/danwood/projects/drone/Dan/model-eps-converted-to.pdf>]
+ [2 </Users/danwood/projects/drone/IMECE2022-95466/model-eps-converted-to.pdf>]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 122.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 122.
 
-Overfull \hbox (1.03224pt too wide) detected at line 256
-[]
+
+LaTeX Warning: Reference `eom1' on page 3 undefined on input line 263.
+
+
+LaTeX Warning: Reference `eom6' on page 3 undefined on input line 263.
+
+
+Underfull \vbox (badness 4660) has occurred while \output is active []
+
+ [3]
+
+LaTeX Warning: Reference `eqssM' on page 4 undefined on input line 324.
+
+
+LaTeX Warning: Citation `isidori1995nonlinear' on page 4 undefined on input line 394.
+
+
+LaTeX Warning: Citation `slotine1991applied' on page 4 undefined on input line 394.
+
+[4]
+
+LaTeX Warning: Reference `eq34' on page 5 undefined on input line 421.
+
+
+LaTeX Warning: Reference `eq37' on page 5 undefined on input line 421.
+
+Package epstopdf Info: Source file: <path1.eps>
+(epstopdf)                    date: 2022-04-02 18:32:40
+(epstopdf)                    size: 48598 bytes
+(epstopdf)             Output file: <path1-eps-converted-to.pdf>
+(epstopdf)                    date: 2022-04-03 23:31:56
+(epstopdf)                    size: 45699 bytes
+(epstopdf)             Command: <repstopdf --outfile=path1-eps-converted-to.pdf path1.eps>
+(epstopdf)             \includegraphics on input line 457.
+Package epstopdf Info: Output file is already uptodate.
+<path1-eps-converted-to.pdf, id=40, 550.055pt x 316.18124pt>
+File: path1-eps-converted-to.pdf Graphic file (type pdf)
+<use path1-eps-converted-to.pdf>
+Package pdftex.def Info: path1-eps-converted-to.pdf  used on input line 457.
+(pdftex.def)             Requested size: 275.02682pt x 158.09023pt.
+
+Overfull \hbox (17.56496pt too wide) in paragraph at lines 457--458
+[][] 
  []
 
 
-Overfull \hbox (27.4821pt too wide) detected at line 307
-[]\OT1/ztmcm/m/n/9 (\OML/ztmcm/m/it/9 X\OT1/ztmcm/m/n/9 ) = []
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package epstopdf Info: Source file: <path2.eps>
+(epstopdf)                    date: 2022-04-02 19:17:30
+(epstopdf)                    size: 41979 bytes
+(epstopdf)             Output file: <path2-eps-converted-to.pdf>
+(epstopdf)                    date: 2022-04-03 23:31:56
+(epstopdf)                    size: 39645 bytes
+(epstopdf)             Command: <repstopdf --outfile=path2-eps-converted-to.pdf path2.eps>
+(epstopdf)             \includegraphics on input line 467.
+Package epstopdf Info: Output file is already uptodate.
+<path2-eps-converted-to.pdf, id=41, 521.95pt x 312.16624pt>
+File: path2-eps-converted-to.pdf Graphic file (type pdf)
+<use path2-eps-converted-to.pdf>
+Package pdftex.def Info: path2-eps-converted-to.pdf  used on input line 467.
+(pdftex.def)             Requested size: 260.97435pt x 156.08273pt.
+
+Overfull \hbox (3.51248pt too wide) in paragraph at lines 467--468
+[][] 
  []
 
-[3] (/Users/danwood/projects/drone/Dan/IMECE2021-70691.bbl) [4
 
-] (/Users/danwood/projects/drone/Dan/IMECE2021-70691.aux)
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+No file IMECE2022-95466.bbl.
+[5 </Users/danwood/projects/drone/IMECE2022-95466/path1-eps-converted-to.pdf> </Users/danwood/projects/drone/IMECE2022-95466/path2-eps-converted-to.pdf>] (/Users/danwood/projects/drone/IMECE2022-95466/IMECE2022-95466.aux)
 
 LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  )
 (\end occurred inside a group at level 1)
@@ -358,18 +430,18 @@ LaTeX Warning: There were undefined references.
 ### simple group (level 1) entered at line 121 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 3427 strings out of 478994
- 48483 string characters out of 5858185
- 391009 words of memory out of 5000000
- 20818 multiletter control sequences out of 15000+600000
+ 3903 strings out of 478994
+ 53783 string characters out of 5858185
+ 390129 words of memory out of 5000000
+ 21282 multiletter control sequences out of 15000+600000
  465510 words of font info for 152 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 68i,15n,74p,2636b,300s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on /Users/danwood/projects/drone/Dan/IMECE2021-70691.pdf (4 pages, 124144 bytes).
+ 68i,16n,74p,2648b,380s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on /Users/danwood/projects/drone/IMECE2022-95466/IMECE2022-95466.pdf (5 pages, 222388 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
- 55 compressed objects within 1 object stream
+ 98 PDF objects out of 1000 (max. 8388607)
+ 62 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
