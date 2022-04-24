@@ -11,106 +11,6 @@ Feedback: IMU data x,y,z,
 
 np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
 
-class state_space(object):
-    def __init__(self):
-        self.name = 'State Space'
-        # super().__init__()
-        self.a = 0.5 #distance to each motor from center of gravity
-        self.m = 0.1 #Physical mass
-        self.g = 9.81 #gravity
-        self.Ix = 0.001
-        self.Iy = 0.001
-        self.Iz = 0.001
-        self.x4 = 0 #Psi - Yaw axis - Z Axis Body
-        self.x5 = 0 #Theta - Roll axis - X Axis Body
-        self.x6 = 0 #Phi - Pitch Axis - Y Axis Body
-        self.x7 = 0 #dXg
-        self.x8 = 0 #dYg
-        self.x9 = 0 #dZg
-        self.x10 = 0
-        self.x11 = 0
-        self.x12 = 0
-        self.u1 = 0
-        self.u2 = 0
-        self.u3 = 0
-        self.u4 = 0
-    
-    def __str__(self):
-        return self.name
-
-    def F(self):
-        f = np.array([[self.x7],
-                    [self.x8],
-                    [self.x9],
-                    [self.x10],
-                    [self.x11],
-                    [self.x12],
-                    [0],
-                    [0],
-                    [0],
-                    [(self.Iy/self.Iz)*self.x10*self.x11*np.cos(self.x5)*np.sin(self.x5) + 
-                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.x11*self.x12*np.cos(self.x5) +
-                    ((2*self.Ix**2 + self.Iz**2 -3*self.Ix*self.Iz)/(self.Ix*self.Iz))*self.x10*self.x12*np.cos(self.x6)*np.sin(self.x6)],
-                    [((self.Iz - 2*self.Ix)/self.Ix)*self.x10*self.x11*np.cos(self.x5) +
-                    (((self.Iz-self.Ix)*(self.Ix-self.Iy+self.Iz))/(self.Ix*self.Iz)) * self.x11*self.x12*np.cos(self.x6)*np.sin(self.x6)],
-                    [(self.Iy/self.Ix)*self.x10*self.x11*np.cos(self.x5) +
-                    ((self.Ix - self.Iy + self.Iz)/self.Iz)*self.x11*self.x12*np.cos(self.x5)*np.sin(self.x5)]])
-        print(f.shape)
-        return f
-
-    def alpha1(self):
-        return (1/self.m)*(np.cos(self.x4))*np.sin(self.x5)*np.cos(self.x6)
-
-    def alpha2(self):
-        return -(1/self.m)*np.cos(self.x4)*np.sin(self.x6)
-    
-    def alpha3(self):
-        return (1/self.m)*np.cos(self.x5)*np.cos(self.x6)
-
-    def G(self):
-        g = np.array([[0,0,0,0],
-                    [0,0,0,0],
-                    [0,0,0,0],
-                    [0,0,0,0],
-                    [0,0,0,0],
-                    [0,0,0,0],
-                    [self.alpha1(), self.alpha1(), self.alpha1(), self.alpha1()],
-                    [self.alpha2(), self.alpha2(), self.alpha2(), self.alpha2()],
-                    [self.alpha3(), self.alpha3(), self.alpha3(), self.alpha3()],
-                    [(self.a/self.Ix)*np.cos(self.x5)*np.sin(self.x6), 0, -(self.a/self.Ix)*np.cos(self.x5)*np.sin(self.x6), 0],
-                    [-(self.a/self.Ix)*np.cos(self.x6), 0, (self.a/self.Ix)*np.cos(self.x6), 0],
-                    [0, self.a/self.Ix, 0, -self.a/self.Ix]])
-        print(g.shape)
-        return g
-
-    def W(self):
-        w = np.zeros((12,1))
-        w[8] = -self.g
-        return w
-    def U(self):
-        u = np.array([[self.u1],[self.u2],[self.u3],[self.u4]])
-        print(u.shape)
-        return u
-
-    def dX(self):
-        return self.F() + np.dot(self.G(), self.U())
-
-# class path(object):
-#     def __init__(self) -> None:
-#         self.x = 0
-#         self.y = 0
-#         self.z = 0
-#     def error(self,estX, estY, estZ):
-#         self.errorX = 
-#         self.errorY = 
-#         self.errorZ = 
-
-#         return [self.errorX, self.errorY, self.errorZ]
-
-#     def plot(self, actual, est):
-        
-
-
 def sat(v):
     v = np.copy(v)
     v[np.abs(v) > 1] = np.sign(v[np.abs(v) > 1])
@@ -595,6 +495,7 @@ class Quadrotor(object):
         # Translational
 #         f = lambda r: Rot_i_to_b(ph,th,ps).T.dot(self.v) # body velocities
         f = lambda r: self.v # inertial velocities
+        # print(self.v)
         self.r = rk4(f, self.r, dt)
         
         # Rotational
@@ -618,6 +519,7 @@ class Quadrotor(object):
         # Rotational
         f = lambda omega: np.linalg.inv(self.I).dot((-np.cross(omega, self.I.dot(omega), axis=0) + M))
         self.omega = rk4(f, self.omega, dt)
+        print(self.omega.shape)
         
         # update control input
         u = np.hstack((T[2], M.flatten()))
@@ -886,10 +788,6 @@ class SMC(Controller):
 
 if __name__ == "__main__":
 
-
-    d = state_space()
-    print(d.dX())
-
     # Instantiate a quadrotor model with the given initial conditions
     quad = Quadrotor(r=np.array([[0],[0],[-10]]),
                      v=np.array([[0],[0],[0]]),
@@ -907,11 +805,7 @@ if __name__ == "__main__":
         # x = np.sin(2*np.pi*f*i*Ts)
         x = np.cos(2*np.pi*f*i*Ts)
         return np.array([x, 2, -1])
-    def set_position(t):
-        p1 = 1.20*t
-        p2 = 1.2*t
-        p3 = 2.50*t-0.05*t**2
-        return np.array([p1,p2,p3])
+
     cmdr.position(set_position)
 
     # Run the simulation

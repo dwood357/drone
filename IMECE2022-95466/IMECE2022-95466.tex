@@ -393,7 +393,7 @@ u_4
 	\end{align}
 showing that the system has a relative degree of 1; but its decoupling matrix is singular, therefore direct application of output feedback linearization control will not work \cite{isidori1995nonlinear}. However, this information about the system's relative degree makes it possible to define the sliding surface as\cite{slotine1991applied}
 \begin{align}\sigma(\textbf{x},t)&=\left(\frac{d}{dt}+\lambda\right)^1\left[\textbf{y}-\textbf{p}(t)\right]\\
-&=\dot{\textbf{y}}-\dot{\textbf{p}}(t)+\lambda\left[\textbf{y}-\textbf{p}(\textbf{x},t)\right]\label{eq37}\end{align} 
+&=\dot{\textbf{y}}-\dot{\textbf{p}}(t)+\lambda\left[\textbf{y}-\textbf{p}(t)\right]\label{eq37}\end{align} 
 where $\gamma$ is an arbitrary diagonal matrix  of tolerances allowed on the trajectory error, and $\textbf{p}(t)$ is the desired time dependent trajectory expressed as
 \begin{equation}\textbf{p}(t)=\left[\begin{array}{c}
 	x_1(t)\\
@@ -424,26 +424,29 @@ Equations (\ref{eq34}) and (\ref{eq37}) show that, since $\textbf{L}_f^2h(x)=0$ 
 &=\textbf{A}\textbf{u}-\ddot{\textbf{p}}(t)+\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\end{align}
 Therefore, $\textbf{u}_o, \textbf{u}^{+}$ and $\textbf{u}^{-}$ must be defined such that
 \begin{align}
-	\textbf{u}^{+}<\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right), \qquad \sigma(\textbf{x})>0\\
+	\textbf{u}_{+}<\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right), \qquad \sigma(\textbf{x})>0\\
 	\textbf{u}_o=\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right), \qquad \sigma(\textbf{x})=0\\
-	\textbf{u}^{-}>\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right),\qquad \sigma(\textbf{x})<0 \label{eq46}
+	\textbf{u}_{-}>\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right),\qquad \sigma(\textbf{x})<0 \label{eq46}
 \end{align}
 For implementation purposes, these equations will be evaluated on element-by-element basis corresponding to the coordinate deviations from the desired path, i.e., \begin{equation}
-	\textbf{u}=\begin{cases}
+	\textbf{u}^{(i)}=\begin{cases}
 		\begin{array}{lr}
-			\textbf{u}^{+}; &  \text{if}\quad \sigma_i(\textbf{x})>0\\  
-			\textbf{u}_o; &  \text{if}\quad \sigma_i(\textbf{x})=0\\ 
-			\textbf{u}^{-}; &  \text{if}\quad \sigma_i(\textbf{x})<0\\
+			\textbf{u}_{+}^{(i)}; &  \text{if}\quad \sigma_i(\textbf{x})>0\\  
+			\textbf{u}_o^{(i)}; &  \text{if}\quad \sigma_i(\textbf{x})=0\\ 
+			\textbf{u}_{-}^{(i)}; &  \text{if}\quad \sigma_i(\textbf{x})<0\\
 		\end{array}
 	\end{cases},\qquad i=1,2,3
 \end{equation}
-where for some small anti-chatter factor $\varepsilon>0$
+where for some small smoothing factor $\varepsilon>0$
 \begin{align}
-	\textbf{u}^{+}&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]-\varepsilon\sigma_i(\textbf{x})\right)\\
-	\textbf{u}_o&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]\right)\\
-	\textbf{u}^{-}&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]+\varepsilon\sigma_i(\textbf{x})\right) \label{eq46}
+	\textbf{u}_{+}^{(i)}&=-\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\varepsilon\sigma_i(\textbf{x})\\
+	\textbf{u}_o^{(i)}&=0\\%\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\left(\ddot{\textbf{p}}_i(t)-\lambda\left[\dot{\textbf{y}}_i-\dot{\textbf{p}}_i(t)\right]\right)\\
+	\textbf{u}_{-}^{(i)}&=\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T\varepsilon\sigma_i(\textbf{x}) \label{eq46}
 \end{align}
-and $\textbf{A}_i$ is row $i$ of matrix $\textbf{A}$.
+and $\textbf{A}_i$ is row $i$ of matrix $\textbf{A}$. Since the outer product matrix $\textbf{A}_i^T\textbf{A}_i$ is always singular, the quantity $\left(\textbf{A}_i^T\textbf{A}_i\right)^{-1}\textbf{A}_i^T$ is computed as the Moore-Penrose pseudo inverse of $\textbf{A}_i$ using any convenient numerical algorithm such as the singular value decomposition \cite{strang2006linear}. The overall control signal becomes
+\begin{equation}
+	\textbf{u}=\left(\textbf{A}^T\textbf{A}\right)^{-1}\textbf{A}^T\left(\ddot{\textbf{p}}(t)-\lambda\left[\dot{\textbf{y}}-\dot{\textbf{p}}(t)\right]\right)+\sum_{i=1}^3\textbf{u}^{(i)}
+\end{equation}using the full matrix $\textbf{A},$ measurements $\textbf{y}$, the path $\textbf{p}(t)$ and the net sum of the individual sliding components $\textbf{u}^{(i)}.$
 
 \section{NUMERICAL EXAMPLES}
 \color{purple}
