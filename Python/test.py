@@ -336,13 +336,21 @@ class slidingModeControl:
         for x in range(0,3):
             sig = self.sigma(x,self.t)
             
+            _A = A[x].reshape(1,4)
+            
             if sig >= 0:
-                u_i = -1/(np.dot(np.transpose(A[x]),A[x]))* np.transpose(A[x])*self.eta*sig
+                # u_i = (-1/(np.dot(np.transpose(A[x]),A[x])))* np.transpose(A[x])*self.eta*sig
+                # print(np.transpose(A).shape, np.transpose(A))
+                # print(A.shape, A)
+                # print(np.dot(np.transpose(A),A))
+                u_i = -inv(np.dot(np.transpose(_A),_A))* np.transpose(_A)*self.eta*sig
+
                 u_sum.append(u_i)
             elif sig == 0:
                 u_i = 0
             else:
-                u_i = 1/(np.dot(np.transpose(A[x]),A[x]))* np.transpose(A[x])*self.eta*sig
+                
+                u_i = (1/(np.dot(np.transpose(_A),_A)))* np.transpose(_A)*self.eta*sig
                 u_sum.append(u_i)
                 
         u_sum = np.sum(u_sum)
@@ -354,11 +362,10 @@ class slidingModeControl:
     def update(self):
         """
         Each Iteration of t:
-        1. get sigma 0,1,2
-        2. get u
-        3. get dX
-        4. solve dX in RK4
-        5. store output
+        1. get u
+        2. solve dX in RK4
+        3. store outputs in v
+        4. add values to plot value holders
         """
         #place to store values for loop
         v = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
