@@ -2,8 +2,8 @@ from typing import Any, List
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import inv, pinv
-from sympy import E
-
+# from sympy import E
+plt.rcParams["keymap.quit"] = ['ctrl+w', 'cmd+w', 'q']
 class slidingModeControl:
     def __init__(self, i, path: bool):
         """
@@ -37,11 +37,15 @@ class slidingModeControl:
 
         self.dt = 0.01
         self.v = np.full((12,),0)
-        self.lam = np.diagflat([1,1,0.01])*0.001
+        self.lam = np.diagflat([1,1,1])*0.001
+        # self.lam = np.diagflat([0.1,0.1,0.1])
         # self.lam = np.diagflat([5,20,1])
         self.eta = 0.8
 
-        self.U = np.zeros((4,1))
+        # self.U = np.zeros((4,1))
+        self.U = np.full((4,1), 0.1)
+        self.sig = []
+        self.dsig = []
 
         self.data = {'xCMD': [],
                      'yCMD': [],
@@ -264,7 +268,7 @@ class slidingModeControl:
             p1 = 0
             p2 = 0
             p3 = 0
-        return np.array([p1, p2, p3])
+        return np.array([p1, p2, p3]).reshape(3,1)
 
     def P2(self, t: int, p: int = 0):
         """
@@ -292,7 +296,7 @@ class slidingModeControl:
             p1 = -0.048*np.sin(0.02*self.t) - 0.000484*self.t*np.cos(0.02*self.t)
             p2 = 0.4464*np.cos(0.062*self.t) - 0.0138384*self.t*np.sin(0.062*self.t)
             p3 = -0.1
-        return np.array([p1, p2, p3])
+        return np.array([p1, p2, p3]).reshape(3,1)
 
     def alpha1(self) -> float:
         return (1/self.m)*(np.cos(self.x4))*np.sin(self.x5)*np.cos(self.x6)
@@ -303,22 +307,33 @@ class slidingModeControl:
     def alpha3(self) -> float:
         return (1/self.m)*np.cos(self.x5)*np.cos(self.x6)
 
-    def sigma(self,idx: int, t: int) -> float:
+    def sigma(self, t: int, u: Any) -> float:
         """
         :idx - int, index of sigma 1,2,3
         :t
         """
+        A = np.array([[self.alpha1(), self.alpha1(), self.alpha1(), self.alpha1()],
+                    [self.alpha2(), self.alpha2(), self.alpha2(), self.alpha2()],
+                    [self.alpha3(), self.alpha3(), self.alpha3(), self.alpha3()]])
         if self.path:
+            ddp = self.P1(t,2)
             dp = self.P1(t,1)
             p = self.P1(t, 0)
-        dp = self.P2(t, 1)
-        p = self.P2(t, 0)
+        else:
+            ddp = self.P2(t, 2)
+            dp = self.P2(t, 1)
+            p = self.P2(t, 0)
         # print(self.y[idx])
         # print(self.dy[idx].shape,self.y[idx].shape)
-        sig = self.dy[idx] - dp[idx] + self.lam[idx,idx]*(self.y[idx] - p[idx])
+        # sig = self.dy[idx] - dp[idx] + self.lam[idx,idx]*(self.y[idx] - p[idx])
+        self.sig = self.dy - dp + np.dot(self.lam, (self.y - p))
+        self.dsig = np.dot(A,u) - ddp + np.dot(self.lam, (self.dy - dp))
+        # print(self.dy.shape, ddp.shape)
         # print('sig=',sig, self.t)
         # print(sig)
-        return sig
+        product = np.dot(np.transpose(self.sig.reshape(3,1)),self.dsig.reshape(3,1))
+        # print(product)
+        return product
 
     def u(self):
 
@@ -329,54 +344,65 @@ class slidingModeControl:
         if self.path:
             ddp = self.P1(self.t, 2)
             dp = self.P1(self.t, 1)
+            p = self.P1(self.t, 0)
         else:
             ddp = self.P2(self.t, 2)
             dp = self.P2(self.t, 1)
+            p = self.P2(self.t, 0)
         
-        dp = dp.reshape(3,1)
-        ddp = ddp.reshape(3,1)
+        # dp = dp.reshape(3,1)
+        # ddp = ddp.reshape(3,1)
         self.y = np.array([[self.x1], [self.x2], [self.x3]])
         self.dy = np.array([[self.x7], [self.x8], [self.x9]])
         # print(self.dy)
         
-        u_sum = np.full((4,1),0)
-        for x in range(0,3):
-            sig = self.sigma(x,self.t)
-            u_i = np.full((4,1), 0)
+        # u_sum = np.full((4,1),0)
+        # for x in range(0,3):
+        #     sig = self.sigma(x,self.t)
+        #     u_i = np.full((4,1), 0)
             
-            _A = A[x].reshape(1,4)
-            # _A = A[x].reshape(4,1)
+        #     _A = A[x].reshape(1,4)
+        #     # _A = A[x].reshape(4,1)
             
-            if sig >= 0:
-                # print(np.dot(np.transpose(_A),_A))
-                try:
-                    # u_i = np.dot(-inv(np.dot(np.transpose(_A),_A)),np.transpose(_A))*self.eta*sig
-                    u_i = pinv(_A)*self.eta*sig
-                    # print(_A,pinv(_A))
-                    # print("Sig +")
+        #     if sig >= 0:
+        #         # print(np.dot(np.transpose(_A),_A))
+        #         try:
+        #             # u_i = np.dot(-inv(np.dot(np.transpose(_A),_A)),np.transpose(_A))*self.eta*sig
+        #             u_i = pinv(_A)*self.eta*sig
+        #             # print(_A,pinv(_A))
+        #             # print("Sig +")
 
-                except Exception as e:
-                    u_i = np.full((4,1),0)
-                    print(repr(e))
+        #         except Exception as e:
+        #             u_i = np.full((4,1),0)
+        #             print(repr(e))
 
-                u_sum = np.append(u_sum, u_i, axis = 1)
+        #         u_sum = np.append(u_sum, u_i, axis = 1)
 
-            elif sig == 0:
-                u_i = np.full((4,1), 0)
-            else:
-                try:
-                    # u_i = np.dot(inv(np.dot(np.transpose(_A),_A)), np.transpose(_A))*self.eta*sig
-                    u_i = pinv(_A)*self.eta*sig
-                    # print(u_i)
-                    # print("sig -")
+        #     elif sig == 0:
+        #         u_i = np.full((4,1), 0)
+        #     else:
+        #         try:
+        #             # u_i = np.dot(inv(np.dot(np.transpose(_A),_A)), np.transpose(_A))*self.eta*sig
+        #             u_i = pinv(_A)*self.eta*sig
+        #             # print(u_i)
+        #             # print("sig -")
 
-                except Exception as e:
-                    print(repr(e))
-                    # u_i = np.full((4,1),0)
+        #         except Exception as e:
+        #             print(repr(e))
+        #             # u_i = np.full((4,1),0)
 
-                u_sum = np.append(u_sum, u_i, axis = 1)
+        #         u_sum = np.append(u_sum, u_i, axis = 1)
                 
-        u_sum = np.sum(u_sum, axis = 1).reshape((4,1))
+        # u_sum = np.sum(u_sum, axis = 1).reshape((4,1))
+        sigma_product = self.sigma(self.t, self.U)
+
+        if sigma_product != 0.0:
+
+            # _u = np.dot(pinv(A),self.eta*(np.sign(self.dsig)* self.sig))
+            _u = np.dot(np.array([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]),self.eta*(np.sign(self.dsig)* self.sig))
+            
+        else:
+            _u = 0
         try:
             # print(np.dot(pinv(A),(ddp - np.dot(self.lam, (self.dy + dp)))))
             # print(self.dy - dp)
@@ -389,8 +415,11 @@ class slidingModeControl:
             # b = np.dot(np.transpose(pinv(A)),pinv(A))
             # print(np.dot(pinv(A),b))
 
-            u = np.dot(pinv(A),(ddp - np.dot(self.lam, (self.dy - dp)))) + u_sum
-
+            # u = np.dot(pinv(A),(ddp - np.dot(self.lam, (self.dy - dp)))) + u_sum
+            
+            # u = np.dot(pinv(A),(ddp - np.dot(self.lam, (self.dy - dp)))) + _u
+            u = np.dot(np.array([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]),(ddp - np.dot(self.lam, (self.dy - dp)))) - _u
+            # print(pinv(A),p, self.y)
         except Exception as e:
             print(repr(e))
             # u = np.full((4,1), 1)
@@ -414,6 +443,7 @@ class slidingModeControl:
         for t in self.i:
             self.t = t
             print("iter=", self.t, np.round(v, 3))
+            # print(self.U)
             # print(v[0],v[1],v[2])
             u = self.u()
 
@@ -466,14 +496,15 @@ class slidingModeControl:
                 u.item(1), 
                 u.item(2), 
                 u.item(3)]
+            self.U = np.array([u.item(0), u.item(1), u.item(2), u.item(3)]).reshape(4,1)
             # print(v)
             self.data['xCMD'] += [self.x1]
             self.data['yCMD'] += [self.x2]
             self.data['zCMD'] += [self.x3]
             
-            self.data['xACT'] += [p[0]]
-            self.data['yACT'] += [p[1]]
-            self.data['zACT'] += [p[2]]
+            self.data['xACT'] += [p.item(0)]
+            self.data['yACT'] += [p.item(1)]
+            self.data['zACT'] += [p.item(2)]
             # print(self.p1,self.p2,self.p3)
             self.t += 1
 
