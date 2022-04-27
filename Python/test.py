@@ -1,7 +1,8 @@
 from typing import Any, List
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy.linalg import inv
+from numpy.linalg import inv, pinv
+from sympy import E
 
 class slidingModeControl:
     def __init__(self, i, path: bool):
@@ -9,12 +10,12 @@ class slidingModeControl:
         Initialize the class, this inits all variables
         :i is the length of simulation
         """
-        self.i = i
+        self.i = np.linspace(0,50,i)
         self.path = path
 
-        self.x1 = 0
-        self.x2 = 0
-        self.x3 = 0
+        self.x1 = 0.1
+        self.x2 = 0.1
+        self.x3 = 0.1
         self.x4 = 0.1
         self.x5 = 0.1
         self.x6 = 0.1
@@ -34,10 +35,13 @@ class slidingModeControl:
         self.Iy = 0.122198
         self.Iz = 0.132166
 
-        self.dt = 0.1
+        self.dt = 0.01
         self.v = np.full((12,),0)
-        self.lam = np.diagflat([0.0001,0.0001,0.0001])
-        self.eta = 2
+        self.lam = np.diagflat([1,1,0.01])*0.001
+        # self.lam = np.diagflat([5,20,1])
+        self.eta = 0.8
+
+        self.U = np.zeros((4,1))
 
         self.data = {'xCMD': [],
                      'yCMD': [],
@@ -321,7 +325,7 @@ class slidingModeControl:
         A = np.array([[self.alpha1(), self.alpha1(), self.alpha1(), self.alpha1()],
                     [self.alpha2(), self.alpha2(), self.alpha2(), self.alpha2()],
                     [self.alpha3(), self.alpha3(), self.alpha3(), self.alpha3()]])
-
+        # print(A)
         if self.path:
             ddp = self.P1(self.t, 2)
             dp = self.P1(self.t, 1)
@@ -329,34 +333,69 @@ class slidingModeControl:
             ddp = self.P2(self.t, 2)
             dp = self.P2(self.t, 1)
         
-        self.y = np.array([self.x1, self.x2, self.x3])
-        self.dy = np.array([self.x7, self.x8, self.x9])
-
-        u_sum = []
+        dp = dp.reshape(3,1)
+        ddp = ddp.reshape(3,1)
+        self.y = np.array([[self.x1], [self.x2], [self.x3]])
+        self.dy = np.array([[self.x7], [self.x8], [self.x9]])
+        # print(self.dy)
+        
+        u_sum = np.full((4,1),0)
         for x in range(0,3):
             sig = self.sigma(x,self.t)
+            u_i = np.full((4,1), 0)
             
             _A = A[x].reshape(1,4)
+            # _A = A[x].reshape(4,1)
             
             if sig >= 0:
-                # u_i = (-1/(np.dot(np.transpose(A[x]),A[x])))* np.transpose(A[x])*self.eta*sig
-                # print(np.transpose(A).shape, np.transpose(A))
-                # print(A.shape, A)
-                # print(np.dot(np.transpose(A),A))
-                u_i = -inv(np.dot(np.transpose(_A),_A))* np.transpose(_A)*self.eta*sig
+                # print(np.dot(np.transpose(_A),_A))
+                try:
+                    # u_i = np.dot(-inv(np.dot(np.transpose(_A),_A)),np.transpose(_A))*self.eta*sig
+                    u_i = pinv(_A)*self.eta*sig
+                    # print(_A,pinv(_A))
+                    # print("Sig +")
 
-                u_sum.append(u_i)
+                except Exception as e:
+                    u_i = np.full((4,1),0)
+                    print(repr(e))
+
+                u_sum = np.append(u_sum, u_i, axis = 1)
+
             elif sig == 0:
-                u_i = 0
+                u_i = np.full((4,1), 0)
             else:
-                
-                u_i = (1/(np.dot(np.transpose(_A),_A)))* np.transpose(_A)*self.eta*sig
-                u_sum.append(u_i)
-                
-        u_sum = np.sum(u_sum)
-        
-        u = np.dot(inv(np.dot(np.transpose(A),A)),np.dot(np.transpose(A),(ddp - np.dot(self.lam, (self.dy-dp)))) + u_sum)
+                try:
+                    # u_i = np.dot(inv(np.dot(np.transpose(_A),_A)), np.transpose(_A))*self.eta*sig
+                    u_i = pinv(_A)*self.eta*sig
+                    # print(u_i)
+                    # print("sig -")
 
+                except Exception as e:
+                    print(repr(e))
+                    # u_i = np.full((4,1),0)
+
+                u_sum = np.append(u_sum, u_i, axis = 1)
+                
+        u_sum = np.sum(u_sum, axis = 1).reshape((4,1))
+        try:
+            # print(np.dot(pinv(A),(ddp - np.dot(self.lam, (self.dy + dp)))))
+            # print(self.dy - dp)
+            # print(ddp - np.dot(self.lam, (self.dy - dp)))
+            # print(pinv(A), ddp - np.dot(self.lam, (self.dy - dp)))
+            # print("dP", dp)
+            # print("ddp",ddp)
+            # print("dy",self.dy)
+            # print(np.dot(pinv(A),np.transpose(pinv(A))))
+            # b = np.dot(np.transpose(pinv(A)),pinv(A))
+            # print(np.dot(pinv(A),b))
+
+            u = np.dot(pinv(A),(ddp - np.dot(self.lam, (self.dy - dp)))) + u_sum
+
+        except Exception as e:
+            print(repr(e))
+            # u = np.full((4,1), 1)
+        # print(u.shape, u.item(0))
+        # print(u.shape,u_sum.shape)
         return u
 
     def update(self):
@@ -368,9 +407,14 @@ class slidingModeControl:
         4. add values to plot value holders
         """
         #place to store values for loop
-        v = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        while self.t < self.i:
-            print("iter=", self.t, np.round(v,3))
+        # v = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+        #This v will initialize the array that values are stored in, to make sure that they are not updated before going through RK4
+        v = [self.x1,self.x2,self.x3,self.x4,self.x5,self.x6,self.x7,self.x8,self.x9,self.x10,self.x11,self.x12,0.1,0.1,0.1,0.1]
+        # while self.t < self.i:
+        for t in self.i:
+            self.t = t
+            print("iter=", self.t, np.round(v, 3))
+            # print(v[0],v[1],v[2])
             u = self.u()
 
             if self.path:
@@ -379,23 +423,23 @@ class slidingModeControl:
                 p = self.P2(self.t, 0)
 
             # dX1 - > x1 use old values for rk4
-            f = lambda x: self.x7
+            f = lambda x: x
             self.x1 = self.rk4(f, v[6], self.dt)
             # print("x1=" , self.x1)
             #dX2 - > x2
-            f = lambda x: self.x8
+            # f = lambda x: self.x8
             self.x2 = self.rk4(f, v[7], self.dt)
             #dX3 - > x3
-            f = lambda x: self.x9
+            # f = lambda x: self.x9
             self.x3 = self.rk4(f, v[8], self.dt)
             #dX4 -> x4
-            f = lambda x: self.x10
+            # f = lambda x: self.x10
             self.x4 = self.rk4(f, v[9], self.dt)
             #dX5 -> x5
-            f = lambda x: self.x11
+            # f = lambda x: self.x11
             self.x5 = self.rk4(f, v[10], self.dt)
             #dX6 -> x6
-            f = lambda x: self.x12
+            # f = lambda x: self.x12
             self.x6 = self.rk4(f, v[11], self.dt)
 
             self.x7 = self.dX7(v, True)
@@ -418,10 +462,10 @@ class slidingModeControl:
                 self.x10, 
                 self.x11, 
                 self.x12, 
-                u[0], 
-                u[1], 
-                u[2], 
-                u[3]]
+                u.item(0), 
+                u.item(1), 
+                u.item(2), 
+                u.item(3)]
             # print(v)
             self.data['xCMD'] += [self.x1]
             self.data['yCMD'] += [self.x2]
@@ -433,26 +477,44 @@ class slidingModeControl:
             # print(self.p1,self.p2,self.p3)
             self.t += 1
 
-    def plot(self):
-        fialpha3D = plt.figure()
-        ax3D = fialpha3D.add_subplot(projection='3d')
+    def plot(self, _3D: bool = True):
+        if _3D:
+            fialpha3D = plt.figure(clear=True)
+            ax3D = fialpha3D.add_subplot(projection='3d')
 
-        ax3D.plot(self.data['xCMD'],self.data['yCMD'],self.data['zCMD'], label='actual')
-        ax3D.plot(self.data['xACT'],self.data['yACT'],self.data['zACT'], label='desired')
+            ax3D.plot(self.data['xCMD'],self.data['yCMD'],self.data['zCMD'], label='actual')
+            ax3D.plot(self.data['xACT'],self.data['yACT'],self.data['zACT'], label='desired')
+            
+            ax3D.axes.set_xlim3d(left = 60, right = 0)
+            ax3D.axes.set_ylim3d(bottom = 0, top = 60)
+            ax3D.axes.set_zlim3d(bottom = 0, top = 60)
+
+            ax3D.legend()
+            ax3D.axes.set_xlabel('X')
+            ax3D.axes.set_ylabel('Y')
+            ax3D.axes.set_zlabel('Z')
         
-        ax3D.axes.set_xlim3d(left = 60, right = 0)
-        ax3D.axes.set_ylim3d(bottom = 0, top = 60)
-        ax3D.axes.set_zlim3d(bottom = 0, top = 60)
+        fig = plt.figure(clear=True)
 
-        ax3D.legend()
-        ax3D.axes.set_xlabel('X')
-        ax3D.axes.set_ylabel('Y')
-        ax3D.axes.set_zlabel('Z')
+        ax = fig.add_subplot(3,1,1)
+        ax.plot(self.data['xCMD'], label = 'Actual')
+        ax.plot(self.data['xACT'], label = 'Desired')
+        ax.set_ylabel('x'); ax.grid()
+
+        ax = fig.add_subplot(3,1,2)
+        ax.plot(self.data['yCMD'], label = 'Actua;l')
+        ax.plot(self.data['yACT'], label = 'Desired')
+        ax.set_ylabel('y'); ax.grid()
+
+        ax = fig.add_subplot(3,1,3)
+        ax.plot(self.data['zCMD'], label = 'Actual')
+        ax.plot(self.data['zACT'], label = 'Desired')
+        ax.set_ylabel('z'); ax.grid()
+        plt.legend()
         plt.show()
 
-
 if __name__ == "__main__":
-    cntrl = slidingModeControl(50, True)
+    cntrl = slidingModeControl(500, True)
     cntrl.update()
     cntrl.plot()
 
