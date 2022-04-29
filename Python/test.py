@@ -38,7 +38,7 @@ class slidingModeControl:
         self.dt = 0.01
         self.v = np.full((12,),0)
         self.lam = np.diagflat([1,1,1])*0.001
-        # self.lam = np.diagflat([0.1,0.1,0.1])
+        # self.lam = np.diagflat([0.1,0.1,0.1]``)
         # self.lam = np.diagflat([5,20,1])
         self.eta = 0.8
 
