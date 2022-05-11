@@ -1,5 +1,7 @@
 % \documentclass[twoside,twocolumn]{article}
+% \documentclass{article}
 \documentclass{article}
+% \usepackage[utf8]{inputenc}
 
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
 
@@ -52,13 +54,9 @@
 \posttitle{\end{center}} % Article title closing formatting
 \title{Sliding Mode Control of a Quad-Copter for Autonomous Trajectory Tracking} % Article title
 \author{%
-\textsc{Daniel Wood, Majura Selekwa}\thanks{A thank you or further information} \\begin{equation}1ex] % Your name
+\textsc{Daniel Wood, Majura Selekwa}\thanks{A thank you or further information} % Your name
 \normalsize North Dakota State University \\ % Your institution
 \normalsize \href{mailto:daniel.wood@ndsu.edu}{daniel.wood@ndsu.edu} % Your email address
-%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
-%\textsc{Jane Smith}\thanks{Corresponding author} \\begin{equation}1ex] % Second author's name
-%\normalsize University of Utah \\ % Second author's institution
-%\normalsize \href{mailto:jane@smith.com}{jane@smith.com} % Second author's email address
 }
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
@@ -70,9 +68,11 @@
 %----------------------------------------------------------------------------------------
 
 \begin{document}
+\maketitle
+
+\tableofcontents
 
 % Print the title
-\maketitle
 
 %----------------------------------------------------------------------------------------
 %	ARTICLE CONTENTS
@@ -309,6 +309,56 @@ Using seperation techniques we can now define the state space as:
 \begin{equation}
 \dot{x} = F(x) + G(x)u
 \end{equation}
+
+\begin{equation}
+	\textbf{f}(\textbf{x})=\left[\begin{array}{c}
+	x_7\\
+	x_8\\
+	x_9\\
+	x_{10}\\
+	x_{11}\\
+	x_{12}\\
+	0\\
+	0\\
+	0\\ \frac{I_y}{I_z}x_{10}x_{11}\cos{x}_{5}\sin{x}_{5}+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)x_{11}x_{12}\cos{x}_{5}\cdots\\\qquad\cdots+\left(\frac{2{I_{x}}^2+{I_{z}}^2-3\,I_{x}I_{z}}{I_xI_z}\right)x_{10}x_{12}\cos{x}_{6}\sin{x}_{6}\\
+	\left(\frac{I_z-2I_x}{I_x}\right)x_{10}x_{11}\cos{x}_{5}+\left(\frac{(I_z-I_x)(I_x-I_y+I_z)}{I_xI_z}\right)x_{11}x_{12}\cos{x}_{6}\sin{x}_{6}\\
+	\frac{I_y}{I_x}x_{10}x_{11}\cos{x}_{5}+\left(\frac{I_{x}-I_y+I_z}{I_z}\right)x_{11}x_{12}\cos{x}_{5}\sin{x}_{5}
+	\end{array}\right]
+\end{equation}
+and
+{\scriptsize\begin{equation}
+\textbf{g}(\textbf{x})=\left[\begin{array}{cccc}
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	0\quad&0\quad&0\quad&0\\
+	\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\quad&\alpha_1(\textbf{x})\\
+	\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\quad&\alpha_2(\textbf{x})\\
+	\alpha_3(\textbf{x})\quad&\alpha_3(\textbf{x})\quad&\alpha_3(\textbf{x})\quad&\alpha_2(\textbf{x})\\
+	\tfrac{a}{I_x}\cos x_5\sin{x_6}&0&-\tfrac{a}{I_x}\cos x_5\sin{x_6}&0\\
+	-\tfrac{a}{I_x}\cos x_6&0&\tfrac{a}{I_x}\cos x_6&0\\
+	0&\tfrac{a}{I_x}&0&-\tfrac{a}{I_x}
+\end{array}\right]
+\end{equation}}
+where \textbf{W} is a constant vector contributed by gravity $g$ defined in this case as
+{\scriptsize\begin{equation}
+	\textbf{W}=\left[\begin{array}{c}
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	0\\
+	-g\\
+	0\\
+	0\\
+	0
+	\end{array}\right]
+	\end{equation}}
 
 
 %------------------------------------------------
